@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InboundPlus Client Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<nav class="site-nav" id="siteNav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="brand-mark">i+</span><span>InboundPlus<small>Client Hub</small></span></a>
+    <button class="menu-toggle" aria-label="Open menu" onclick="document.getElementById('siteNav').classList.toggle('open')"><span data-icon="menu" style="display:inline-block;width:20px;height:20px"></span></button>
+    <div class="site-links">
+      <a href="#services">Services</a>
+      <a href="#software">Software</a>
+      <a href="#portal">Client Portal</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="site-actions">
+      <a class="btn btn-ghost" href="login.html">Log in</a>
+      <a class="btn btn-primary" href="login.html?mode=register">Register</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="fade-in">
+      <span class="eyebrow"><span class="dot"></span> Your e-commerce growth team, powered by AI</span>
+      <h1>Every campaign, deployment and result — <em>in one client portal.</em></h1>
+      <p class="lead">Log in to see live sales analytics, SEO rankings, ad performance, AI agents, project progress and reports. No more chasing spreadsheets and email threads.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="login.html?mode=register">Create client account</a>
+        <a class="btn btn-ghost" href="login.html">Client login</a>
+      </div>
+      <div class="hero-stats">
+        <div><b>+40%</b><span>avg. e-commerce sales lift</span></div>
+        <div><b>50+</b><span>brands supported</span></div>
+        <div><b>24/7</b><span>AI agents on duty</span></div>
+      </div>
+    </div>
+    <div class="scene-box" id="heroScene">
+      <div class="scene-float" style="top:18px;right:18px">Revenue this month<b>$84,920</b><span class="badge green">▲ 18.2%</span></div>
+      <div class="scene-float" style="top:96px;left:18px">ROAS<b>4.6×</b></div>
+      <span class="scene-hint">Drag to rotate · hover a bar</span>
+    </div>
+  </div>
+</header>
+
+<section class="block" id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Services that grow online stores</h2>
+      <p>Strategy, creative and engineering under one roof — with every deliverable tracked inside your portal.</p>
+    </div>
+    <div class="grid-3" id="servicesGrid"></div>
+  </div>
+</section>
+
+<section class="block alt" id="software">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Software &amp; AI solutions</h2>
+      <p>Ready-to-deploy agents, integrations and tools. Request any of them from your portal and track the rollout live.</p>
+    </div>
+    <div class="filter-row" id="swFilters"></div>
+    <div class="grid-3" id="swGrid"></div>
+  </div>
+</section>
+
+<section class="block" id="portal">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What you get after logging in</h2>
+      <p>One login. Everything about your growth — updated daily.</p>
+    </div>
+    <div class="grid-4" id="portalFeatures"></div>
+  </div>
+</section>
+
+<section class="block alt" id="blog">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>From the blog</h2>
+      <p>Playbooks on AI, CRO, SEO and analytics for e-commerce teams.</p>
+    </div>
+    <div class="filter-row" id="blogFilters"></div>
+    <div class="grid-3" id="blogGrid"></div>
+  </div>
+</section>
+
+<section class="block" id="contact">
+  <div class="wrap">
+    <div class="cta-band">
+      <div>
+        <h2>Ready to see your numbers in 3D?</h2>
+        <p>Create your client account or request a free AI growth evaluation.</p>
+      </div>
+      <div class="flex wrap-gap">
+        <a class="btn btn-ghost" href="login.html?mode=register">Register</a>
+        <a class="btn btn-primary" href="login.html">Client login</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© 2026 InboundPlus · Lima · Florida</span>
+    <span>Demo portal prototype prepared by Synchronous Consulting — sample data only.</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+(function () {
+  const D = IPDATA, esc = IP.esc;
+  IP.hydrateIcons();
+
+  // Hero 3D: 4 channels × 6 months
+  const hv = D.analytics.channelMonthly.slice(0, 4);
+  IP.barScene(document.getElementById("heroScene"), {
+    values: hv,
+    colors: [0x12305e, 0x2563eb, 0x60a5fa, 0xbfd3f7],
+    tooltip: (r, c, v) => `${D.analytics.channels.labels[r]} · ${D.months.slice(-6)[c]}: <b>$${v}k</b>`,
+    radius: 15,
+  });
+
+  const services = [
+    ["target", "Growth strategy", "AI-assisted growth evaluation, funnel diagnosis and a 90-day roadmap.", "Blueprint from $2,000"],
+    ["ads", "Performance marketing", "Meta, Google and TikTok campaigns managed for ROAS, not clicks.", "From $3,000/mo"],
+    ["cart", "E-commerce development", "Shopify and WooCommerce builds, checkout optimisation and CRO testing.", "From $6,000"],
+    ["search", "SEO & content", "Technical SEO, AI content briefs, programmatic pages and link building.", "From $900/mo"],
+    ["bot", "AI agents & Claude skills", "Customer-service, ad-copy and analyst agents trained on your brand.", "From $1,500"],
+    ["plug", "Integrations & data", "HubSpot, store, ERP and ad-platform data unified into one dashboard.", "From $2,500"],
+  ];
+  document.getElementById("servicesGrid").innerHTML = services.map(([i, t, d, p]) => `
+    <div class="card tilt"><div class="pop"><div class="svc-icon">${IP.icon(i)}</div><h3>${t}</h3><p>${d}</p><div class="price">${p}</div></div></div>`).join("");
+
+  function chips(el, cats, onPick) {
+    let cur = "All";
+    const draw = () => {
+      el.innerHTML = ["All", ...cats].map((c) => `<button class="chip ${c === cur ? "active" : ""}" data-c="${c}">${c}</button>`).join("");
+      el.querySelectorAll("button").forEach((b) => b.onclick = () => { cur = b.dataset.c; draw(); onPick(cur); });
+    };
+    draw();
+  }
+
+  function drawSoftware(cat) {
+    const list = D.software.filter((s) => cat === "All" || s.cat === cat);
+    document.getElementById("swGrid").innerHTML = list.map((s) => `
+      <div class="card tilt sw-card fade-in">
+        <div class="sw-top"><span class="badge blue">${esc(s.cat)}</span>${s.status ? `<span class="badge ${s.status === "New" ? "green" : "amber"}">${s.status}</span>` : ""}</div>
+        <h3>${esc(s.name)}</h3><p>${esc(s.desc)}</p>
+        <ul>${s.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
+        <div class="flex between" style="margin-top:auto;padding-top:10px"><b style="color:var(--navy);font-size:14px">${esc(s.price)}</b>
+        <a class="btn btn-sm btn-ghost" href="login.html">Request</a></div>
+      </div>`).join("");
+    IP.tilt();
+  }
+  chips(document.getElementById("swFilters"), [...new Set(D.software.map((s) => s.cat))], drawSoftware);
+  drawSoftware("All");
+
+  const feats = [
+    ["chart", "Live analytics", "Revenue, conversion, AOV, funnels and cohorts with 3D drill-downs."],
+    ["search", "SEO tracking", "Keyword positions, site health and Search Console data."],
+    ["rocket", "Deployments", "Every release of your store, agents and integrations — with status."],
+    ["bot", "AI agents", "Chat with your agents, see conversations resolved and hours saved."],
+    ["report", "Reports", "Monthly and quarterly reports, downloadable any time."],
+    ["survey", "Surveys", "Share feedback and see results in real time."],
+    ["file", "Files & approvals", "Approve creatives and share assets in one place."],
+    ["card", "Billing", "Invoices, retainer hours and plan details."],
+  ];
+  document.getElementById("portalFeatures").innerHTML = feats.map(([i, t, d]) => `
+    <div class="card tilt"><div class="pop"><div class="svc-icon">${IP.icon(i)}</div><h3 style="font-size:16px">${t}</h3><p>${d}</p></div></div>`).join("");
+
+  function drawBlog(cat) {
+    const list = D.blog.filter((b) => cat === "All" || b.cat === cat);
+    document.getElementById("blogGrid").innerHTML = list.map((b) => `
+      <article class="card tilt blog-card fade-in">
+        <div class="blog-thumb">${IP.icon(b.icon)}</div>
+        <div class="blog-body"><div class="blog-meta"><span class="badge gray">${esc(b.cat)}</span><span>${b.date}</span><span>${b.read}</span></div>
+        <h3>${esc(b.title)}</h3><p>${esc(b.excerpt)}</p></div>
+      </article>`).join("");
+    IP.tilt();
+  }
+  chips(document.getElementById("blogFilters"), [...new Set(D.blog.map((b) => b.cat))], drawBlog);
+  drawBlog("All");
+  IP.tilt();
+})();
+</script>
+</body>
+</html>

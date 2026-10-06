@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in · InboundPlus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="auth-page">
+  <aside class="auth-side">
+    <a class="brand" href="index.html"><span class="brand-mark">i+</span><span>InboundPlus<small>Client Hub</small></span></a>
+    <h2 style="margin-top:36px">Your growth, in three dimensions.</h2>
+    <p>Sales, SEO, ads, AI agents, deployments and reports — all in one secure client portal.</p>
+    <div class="scene-box" id="authScene"><span class="scene-hint">Drag to rotate</span></div>
+  </aside>
+
+  <main class="auth-main">
+    <div class="auth-card fade-in">
+      <div class="tabs" role="tablist">
+        <button id="tabLogin" class="active" role="tab">Log in</button>
+        <button id="tabReg" role="tab">Register</button>
+      </div>
+
+      <!-- Login -->
+      <form id="loginForm" novalidate>
+        <h1>Welcome back</h1>
+        <p class="sub">Log in to your client portal.</p>
+        <label class="field"><span>Work email</span><input class="input" type="email" id="lEmail" autocomplete="username" placeholder="you@company.com" required></label>
+        <label class="field"><span>Password</span><input class="input" type="password" id="lPass" autocomplete="current-password" placeholder="••••••••" required></label>
+        <div class="auth-foot">
+          <label class="flex" style="gap:8px;font-weight:500"><input type="checkbox" checked> Remember me</label>
+          <a href="#" id="forgot">Forgot password?</a>
+        </div>
+        <div class="form-error" id="lErr" role="alert"></div>
+        <button class="btn btn-primary" style="width:100%" type="submit">Log in</button>
+        <div class="divider">or</div>
+        <button class="btn btn-ghost" style="width:100%" type="button" id="demoBtn">Explore the demo client account</button>
+      </form>
+
+      <!-- Register -->
+      <form id="regForm" novalidate hidden>
+        <h1>Create your account</h1>
+        <p class="sub">Set up your company's client portal in under a minute.</p>
+        <div class="row-2">
+          <label class="field"><span>Full name</span><input class="input" id="rName" autocomplete="name" required></label>
+          <label class="field"><span>Company</span><input class="input" id="rCompany" autocomplete="organization" required></label>
+        </div>
+        <label class="field"><span>Work email</span><input class="input" type="email" id="rEmail" autocomplete="email" required></label>
+        <div class="row-2">
+          <label class="field"><span>Store website</span><input class="input" id="rSite" placeholder="mystore.com"></label>
+          <label class="field"><span>Store platform</span>
+            <select class="input" id="rPlatform"><option>Shopify</option><option>WooCommerce</option><option>VTEX</option><option>Magento</option><option>Other / none yet</option></select></label>
+        </div>
+        <label class="field"><span>Main goal</span>
+          <select class="input" id="rGoal"><option>Increase online sales</option><option>Launch a new store</option><option>Automate with AI agents</option><option>Improve SEO</option><option>Better reporting</option></select></label>
+        <label class="field"><span>Password <small class="muted">(min. 8 characters)</small></span><input class="input" type="password" id="rPass" autocomplete="new-password" required></label>
+        <label class="flex" style="gap:8px;font-size:13px;margin-bottom:14px"><input type="checkbox" id="rTerms"> I agree to the terms of service and privacy policy</label>
+        <div class="form-error" id="rErr" role="alert"></div>
+        <button class="btn btn-primary" style="width:100%" type="submit">Create account</button>
+      </form>
+
+      <p class="demo-note"><b>Prototype:</b> this is a front-end demo. Accounts are stored only in this browser, and no data is sent anywhere.</p>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="assets/js/common.js"></script>
+<script src="assets/js/data.js"></script>
+<script>
+(function () {
+  if (IP.session()) { location.href = "portal.html"; return; }
+  const $ = (id) => document.getElementById(id);
+
+  IP.barScene($("authScene"), {
+    values: [[3, 4, 5, 6, 7, 9], [2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 4, 5]],
+    colors: [0xffffff, 0x93b4f5, 0x4f7fe0],
+    floor: 0x1e4282, radius: 19, height: 4,
+  });
+
+  function mode(m) {
+    const reg = m === "register";
+    $("loginForm").hidden = reg; $("regForm").hidden = !reg;
+    $("tabLogin").classList.toggle("active", !reg); $("tabReg").classList.toggle("active", reg);
+    document.title = (reg ? "Register" : "Log in") + " · InboundPlus";
+  }
+  $("tabLogin").onclick = () => mode("login");
+  $("tabReg").onclick = () => mode("register");
+  if (new URLSearchParams(location.search).get("mode") === "register") mode("register");
+
+  const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  const go = (session) => { IP.store.set("session", session); location.href = "portal.html"; };
+  const initials = (n) => n.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join("") || "U";
+
+  $("loginForm").onsubmit = (e) => {
+    e.preventDefault();
+    const email = $("lEmail").value.trim();
+    if (!validEmail(email)) return ($("lErr").textContent = "Enter a valid email address.");
+    if ($("lPass").value.length < 6) return ($("lErr").textContent = "Password must be at least 6 characters.");
+    const users = IP.store.get("users", {});
+    const u = users[email.toLowerCase()];
+    const name = u ? u.name : email.split("@")[0].replace(/[._]/g, " ");
+    go({ email, name, initials: initials(name), company: u ? u.company : IPDATA.client.company, platform: u ? u.platform : "Shopify" });
+  };
+
+  $("demoBtn").onclick = () => go({ email: "demo@andesoutdoor.example", name: "Carla Mendoza", initials: "CM", company: IPDATA.client.company, platform: "Shopify", demo: true });
+
+  $("forgot").onclick = (e) => { e.preventDefault(); IP.toast("Demo: a reset link would be emailed to you."); };
+
+  $("regForm").onsubmit = (e) => {
+    e.preventDefault();
+    const name = $("rName").value.trim(), company = $("rCompany").value.trim(), email = $("rEmail").value.trim();
+    let err = "";
+    if (!name || !company) err = "Please enter your name and company.";
+    else if (!validEmail(email)) err = "Enter a valid email address.";
+    else if ($("rPass").value.length < 8) err = "Password must be at least 8 characters.";
+    else if (!$("rTerms").checked) err = "Please accept the terms to continue.";
+    $("rErr").textContent = err;
+    if (err) return;
+    const users = IP.store.get("users", {});
+    users[email.toLowerCase()] = { name, company, platform: $("rPlatform").value, goal: $("rGoal").value, site: $("rSite").value.trim() };
+    IP.store.set("users", users);
+    go({ email, name, initials: initials(name), company, platform: $("rPlatform").value, isNew: true });
+  };
+})();
+</script>
+</body>
+</html>

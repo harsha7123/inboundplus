@@ -169,7 +169,7 @@
       const hit = ray.intersectObjects(bars)[0];
       if (hot && (!hit || hit.object !== hot)) { hot.material.color.setHex(hot.userData.base); hot = null; }
       if (hit) {
-        hot = hit.object; hot.material.color.setHex(opts.hover || 0xf59e0b);
+        hot = hit.object; hot.material.color.setHex(opts.hover || 0xffb020);
         const { r: ri, c } = hot.userData;
         tip.innerHTML = opts.tooltip(ri, c, opts.values[ri][c]);
         tip.style.display = "block";

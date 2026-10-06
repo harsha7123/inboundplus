@@ -1,11 +1,11 @@
 /* InboundPlus Client Portal — views & interactions (front-end prototype, sample data) */
-(function () {
-  const session = IP.session();
+(async function () {
+  const session = await IP.auth.current();
   if (!session) { location.href = "login.html"; return; }
 
   const D = IPDATA, esc = IP.esc, icon = IP.icon, $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => [...(r || document).querySelectorAll(s)];
-  const C = { navy: "#12305e", blue: "#2563eb", sky: "#60a5fa", pale: "#bfd3f7", green: "#16a34a", red: "#dc2626", amber: "#d97706", gray: "#94a3b8", grid: "#eef1f6" };
-  const PALETTE = [C.navy, C.blue, C.sky, C.pale, C.green, C.gray];
+  const C = { navy: "#0c1115", blue: "#f26b35", purple: "#5551d3", sky: "#008fff", pale: "#fdc9ad", green: "#16a34a", red: "#dc2626", amber: "#d97706", gray: "#94a3b8", grid: "#eef1f6" };
+  const PALETTE = [C.blue, C.purple, C.sky, C.navy, C.pale, C.gray];
 
   /* ---------- persistent demo state ---------- */
   const state = IP.store.get("state", null) || {
@@ -19,7 +19,7 @@
   let charts = [], scenes = [];
   function clearViz() { charts.forEach((c) => c.destroy()); charts = []; scenes.forEach((s) => s && s.destroy()); scenes = []; }
   if (window.Chart) {
-    Chart.defaults.font.family = "Inter, system-ui, sans-serif";
+    Chart.defaults.font.family = "Rubik, system-ui, sans-serif";
     Chart.defaults.color = "#64748b";
     Chart.defaults.plugins.legend.labels.boxWidth = 10;
     Chart.defaults.plugins.tooltip.backgroundColor = C.navy;
@@ -147,7 +147,7 @@
 
     spark("sp1", A.revenue, C.blue); spark("sp2", A.orders, C.navy); spark("sp3", A.convRate, C.green); spark("sp4", A.aov, C.amber);
     const cm = A.channelMonthly, m6 = D.months.slice(-6);
-    const sc = IP.barScene($("#ov3d"), { values: cm, colors: [0x12305e, 0x2563eb, 0x60a5fa, 0xbfd3f7, 0x16a34a, 0x94a3b8], tooltip: (r, c, val) => `${A.channels.labels[r]} · ${m6[c]}<br><b>$${val}k revenue</b>`, radius: 17 });
+    const sc = IP.barScene($("#ov3d"), { values: cm, colors: [0xf26b35, 0x5551d3, 0x008fff, 0x0c1115, 0xfdc9ad, 0x94a3b8], tooltip: (r, c, val) => `${A.channels.labels[r]} · ${m6[c]}<br><b>$${val}k revenue</b>`, radius: 17 });
     scenes.push(sc);
     $$("#ch3dMode button").forEach((b) => b.onclick = () => {
       $$("#ch3dMode button").forEach((x) => x.classList.toggle("active", x === b));
@@ -159,7 +159,7 @@
       { type: "bar", label: "Revenue ($)", data: A.revenue, backgroundColor: C.blue, borderRadius: 6, yAxisID: "y" },
       { type: "line", label: "Sessions", data: A.sessions, borderColor: C.navy, backgroundColor: C.navy, tension: .35, pointRadius: 3, yAxisID: "y1" }] },
       options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false }, scales: { ...axes((v) => "$" + IP.fmt(v)), y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { callback: (v) => IP.fmt(v) } } } } });
-    chart("chRetainer", { type: "doughnut", data: { labels: ["Used", "Remaining"], datasets: [{ data: [r.used, r.hours - r.used], backgroundColor: [C.blue, "#e8efff"], borderWidth: 0 }] }, options: { maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: "75%", plugins: { legend: { display: false } } } });
+    chart("chRetainer", { type: "doughnut", data: { labels: ["Used", "Remaining"], datasets: [{ data: [r.used, r.hours - r.used], backgroundColor: [C.blue, "#fff0e8"], borderWidth: 0 }] }, options: { maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: "75%", plugins: { legend: { display: false } } } });
     $("#askAgent").onclick = () => { curAgent = "a3"; go("agents"); };
   };
 
@@ -204,7 +204,7 @@
     draw(12);
 
     const F = A.funnel, top = F[0].value;
-    $("#funnel").innerHTML = F.map((s, i) => `<div class="funnel-row" data-i="${i}" style="cursor:pointer"><span>${s.stage}</span><div><div class="funnel-bar" style="width:0;background:${PALETTE[i]};${i >= 3 ? "color:#12305e" : ""}">${IP.fmt(s.value)}</div></div><b class="num">${((s.value / top) * 100).toFixed(1)}%</b></div>`).join("");
+    $("#funnel").innerHTML = F.map((s, i) => `<div class="funnel-row" data-i="${i}" style="cursor:pointer"><span>${s.stage}</span><div><div class="funnel-bar" style="width:0;background:${PALETTE[i]};${i === 4 ? "color:#0c1115" : ""}">${IP.fmt(s.value)}</div></div><b class="num">${((s.value / top) * 100).toFixed(1)}%</b></div>`).join("");
     requestAnimationFrame(() => $$("#funnel .funnel-bar").forEach((b, i) => b.style.width = Math.max(8, (F[i].value / top) * 100) + "%"));
     $$("#funnel .funnel-row").forEach((row) => row.onclick = () => {
       const i = +row.dataset.i; $$("#funnel .funnel-row").forEach((x) => x.style.opacity = x === row ? 1 : .55);
@@ -218,7 +218,7 @@
 
     const cm = D.months.slice(-6);
     $("#cohort").innerHTML = `<thead><tr><th class="nosort">Cohort</th>${["M0", "M1", "M2", "M3", "M4", "M5"].map((m) => `<th class="nosort num">${m}</th>`).join("")}</tr></thead><tbody>` +
-      A.cohorts.map((row, i) => `<tr><td><b>${cm[i]}</b></td>${[0, 1, 2, 3, 4, 5].map((j) => row[j] == null ? "<td></td>" : `<td class="num" style="background:rgba(37,99,235,${(row[j] / 100) * .85 + .05});color:${row[j] > 50 ? "#fff" : C.navy};font-weight:600" title="${cm[i]} cohort, month ${j}: ${row[j]}%">${row[j]}%</td>`).join("")}</tr>`).join("") + "</tbody>";
+      A.cohorts.map((row, i) => `<tr><td><b>${cm[i]}</b></td>${[0, 1, 2, 3, 4, 5].map((j) => row[j] == null ? "<td></td>" : `<td class="num" style="background:rgba(85,81,211,${(row[j] / 100) * .85 + .05});color:${row[j] > 50 ? "#fff" : C.navy};font-weight:600" title="${cm[i]} cohort, month ${j}: ${row[j]}%">${row[j]}%</td>`).join("")}</tr>`).join("") + "</tbody>";
   };
 
   /* ===================== E-COMMERCE ===================== */
@@ -238,7 +238,7 @@
     sortableTable($("#prodTbl"), ["Product", "Units", "Revenue", "Trend"], A.topProducts.map((p) => [p.name, p.units, p.revenue, p.trend]),
       [(x) => `<b>${esc(x)}</b>`, (x) => x.toLocaleString(), (x) => IP.money(x), (x) => `<span style="color:${x >= 0 ? C.green : C.red};font-weight:700">${x >= 0 ? "▲" : "▼"} ${Math.abs(x)}%</span>`]);
     const pv = A.topProducts.map((p) => [0.7, 0.85, 0.92, 1].map((f) => Math.round((p.revenue / 1000) * f)));
-    scenes.push(IP.barScene($("#prod3d"), { values: pv, colors: [0x12305e, 0x2563eb, 0x60a5fa, 0xbfd3f7, 0x16a34a], tooltip: (r, c, val) => `${A.topProducts[r].name} · ${D.months.slice(-4)[c]}<br><b>$${val}k</b>`, radius: 14 }));
+    scenes.push(IP.barScene($("#prod3d"), { values: pv, colors: [0xf26b35, 0x5551d3, 0x008fff, 0x0c1115, 0xfdc9ad], tooltip: (r, c, val) => `${A.topProducts[r].name} · ${D.months.slice(-4)[c]}<br><b>$${val}k</b>`, radius: 14 }));
   };
 
   function sortableTable(tbl, headers, rows, fmts) {
@@ -267,7 +267,7 @@
     spark("ss1", S.clicks, C.blue); spark("ss2", S.impressions, C.navy); spark("ss3", S.visibility, C.green); spark("ss4", S.backlinks, C.amber);
     const hc = chart("chHealth", { type: "doughnut", data: { datasets: [{ data: [S.health, 100 - S.health], backgroundColor: [C.green, "#e7f6ec"], borderWidth: 0 }] }, options: { maintainAspectRatio: false, rotation: -90, circumference: 180, cutout: "75%", plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
     chart("chGsc", { type: "line", data: { labels: D.months, datasets: [
-      { label: "Clicks", data: S.clicks, borderColor: C.blue, backgroundColor: "rgba(37,99,235,.08)", fill: true, tension: .35, yAxisID: "y" },
+      { label: "Clicks", data: S.clicks, borderColor: C.blue, backgroundColor: "rgba(242,107,53,.08)", fill: true, tension: .35, yAxisID: "y" },
       { label: "Impressions", data: S.impressions, borderColor: C.navy, tension: .35, yAxisID: "y1", borderDash: [5, 4] }] },
       options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false }, scales: { ...axes(), y1: { position: "right", grid: { display: false }, border: { display: false }, ticks: { callback: (x) => IP.fmt(x) } } } } });
     function drawKw(q) {
@@ -533,7 +533,7 @@
   function printReport(r) {
     const w = window.open("", "_blank");
     if (!w) return IP.toast("Allow pop-ups to save the PDF.");
-    w.document.write(`<!doctype html><html><head><title>${esc(r.name)}</title><style>body{font-family:Inter,Arial,sans-serif;color:#0f172a;max-width:720px;margin:40px auto;padding:0 20px}h1{color:#12305e}.top{display:flex;justify-content:space-between;border-bottom:2px solid #12305e;padding-bottom:12px;margin-bottom:20px}</style></head><body><div class="top"><b>InboundPlus</b><span>${esc(session.company)}</span></div><h1>${esc(r.name)}</h1><p>${r.type} report · ${r.date}</p>${reportBody(r)}<p style="margin-top:40px;color:#64748b;font-size:12px">Prototype report with sample data.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
+    w.document.write(`<!doctype html><html><head><title>${esc(r.name)}</title><style>body{font-family:Rubik,Arial,sans-serif;color:#0c1115;max-width:720px;margin:40px auto;padding:0 20px}h1{color:#f26b35}.top{display:flex;justify-content:space-between;border-bottom:3px solid #f26b35;padding-bottom:12px;margin-bottom:20px}</style></head><body><div class="top"><img src="${location.href.replace(/[^/]*$/, "")}assets/img/logo.png" style="height:28px" alt="InboundPlus"><span>${esc(session.company)}</span></div><h1>${esc(r.name)}</h1><p>${r.type} report · ${r.date}</p>${reportBody(r)}<p style="margin-top:40px;color:#64748b;font-size:12px">Prototype report with sample data.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
     w.document.close();
   }
 
@@ -579,9 +579,8 @@
     v.innerHTML = head("Blog & insights", "Playbooks from the InboundPlus team, curated for your store.", "") +
       `<div class="filter-row" style="justify-content:flex-start" id="bF">${cats.map((c, i) => `<button class="chip ${i ? "" : "active"}" data-c="${c}">${c}</button>`).join("")}</div><div class="grid g-3" id="bG"></div>`;
     function draw(cat) {
-      $("#bG").innerHTML = D.blog.filter((b) => cat === "All" || b.cat === cat).map((b) => `<article class="card tilt blog-card fade-in" data-b="${b.id}" style="cursor:pointer"><div class="blog-thumb">${icon(b.icon)}</div><div class="blog-body"><div class="blog-meta"><span class="badge gray">${b.cat}</span><span>${b.date}</span><span>${b.read}</span></div><h3>${esc(b.title)}</h3><p>${esc(b.excerpt)}</p></div></article>`).join("");
+      $("#bG").innerHTML = D.blog.filter((b) => cat === "All" || b.cat === cat).map((b) => `<a class="card tilt blog-card fade-in" href="${b.url}" target="_blank" rel="noopener" style="color:inherit"><div class="blog-thumb">${icon(b.icon)}</div><div class="blog-body"><div class="blog-meta"><span class="badge gray">${b.cat}</span><span>${b.lang}</span><span>inboundplus.agency ↗</span></div><h3>${esc(b.title)}</h3><p>${esc(b.excerpt)}</p></div></a>`).join("");
       IP.tilt($("#bG"));
-      $$("[data-b]").forEach((a) => a.onclick = () => { const b = D.blog.find((x) => x.id === +a.dataset.b); modal(`<span class="badge gray">${b.cat}</span><h2 style="margin-top:10px">${esc(b.title)}</h2><p class="muted">${b.date} · ${b.read} read</p><br><p>${esc(b.excerpt)}</p><br><p class="muted">Full article content would appear here, pulled from the agency's CMS.</p><div class="modal-foot"><button class="btn btn-primary" data-close>Close</button></div>`); });
     }
     $$("#bF .chip").forEach((b) => b.onclick = () => { $$("#bF .chip").forEach((x) => x.classList.toggle("active", x === b)); draw(b.dataset.c); });
     draw("All");
@@ -640,7 +639,7 @@
     const r = D.client.retainer;
     v.innerHTML = head("Billing", "Your plan, retainer hours and invoices.", "") +
     `<div class="grid g-3">
-      <div class="panel tilt"><small class="muted">Current plan</small><h3 style="margin:6px 0;font-size:20px;color:${C.navy}">${D.client.plan}</h3><p class="muted" style="font-size:14px">$10,000 / month · renews Nov 1, 2026</p><button class="btn btn-sm btn-ghost" style="margin-top:14px" id="chgPlan">Compare plans</button></div>
+      <div class="panel tilt"><small class="muted">Current plan</small><h3 style="margin:6px 0;font-size:20px;color:${C.navy}">${D.client.plan}</h3><p class="muted" style="font-size:14px">${D.client.planTerm} · billed monthly (sample)</p><button class="btn btn-sm btn-ghost" style="margin-top:14px" id="chgPlan">Compare plans</button></div>
       <div class="panel tilt"><small class="muted">Retainer hours (October)</small><div style="font-size:28px;font-weight:800;color:${C.navy};margin:6px 0">${r.used} / ${r.hours} h</div><div class="progress"><div style="width:${(r.used / r.hours) * 100}%"></div></div><small class="muted">${r.hours - r.used} hours remaining · resets Nov 1</small></div>
       <div class="panel tilt"><small class="muted">Balance due</small><div style="font-size:28px;font-weight:800;color:${C.amber};margin:6px 0">${IP.money(sum(D.invoices.filter((i) => i.status === "Due").map((i) => i.amount)))}</div><small class="muted">Due Oct 15, 2026 · Bank transfer or card</small></div>
     </div>
@@ -648,7 +647,7 @@
       ${D.invoices.map((i) => `<tr><td><b>${i.id}</b></td><td>${i.date}</td><td>${esc(i.desc)}</td><td class="num">${IP.money(i.amount)}</td><td>${statusBadge(i.status)}</td><td><button class="btn btn-sm btn-ghost" data-inv="${i.id}">View</button></td></tr>`).join("")}
     </tbody></table></div></div>`;
     $$("[data-inv]").forEach((b) => b.onclick = () => { const i = D.invoices.find((x) => x.id === b.dataset.inv); modal(`<h2>${i.id}</h2><p class="muted">${i.date} · ${esc(session.company)}</p><br><div class="list"><div class="list-item"><span class="grow">${esc(i.desc)}</span><b>${IP.money(i.amount)}</b></div><div class="list-item"><span class="grow">Tax</span><b>$0</b></div><div class="list-item"><b class="grow">Total</b><b>${IP.money(i.amount)}</b></div></div><div class="modal-foot"><button class="btn btn-primary" data-close>Close</button></div>`); });
-    $("#chgPlan").onclick = () => modal(`<h2>Plans</h2><p class="muted">Contact your account manager to change plans.</p><br><div class="list">${[["Ecommerce Growth Blueprint", "$2,000 one-time"], ["Ecommerce Growth Advisory", "from $3,000 / month"], ["Commerce Growth Partner", "from $10,000 / month"]].map(([n, p]) => `<div class="list-item"><b class="grow">${n}</b><span>${p}</span>${n === D.client.plan ? statusBadge("Active") : ""}</div>`).join("")}</div><div class="modal-foot"><button class="btn btn-ghost" data-close>Close</button><button class="btn btn-primary" onclick="Portal.go('messages')">Message account manager</button></div>`, (m) => $(".btn-primary", m).addEventListener("click", closeModal));
+    $("#chgPlan").onclick = () => modal(`<h2>Plans</h2><p class="muted">Contact your account manager to change plans.</p><br><div class="list">${D.plans.map((x) => [x.name, x.price + " " + x.billing.replace("from · ", "")]).map(([n, p]) => `<div class="list-item"><b class="grow">${n}</b><span>${p}</span>${n === D.client.plan ? statusBadge("Active") : ""}</div>`).join("")}</div><div class="modal-foot"><button class="btn btn-ghost" data-close>Close</button><button class="btn btn-primary" onclick="Portal.go('messages')">Message account manager</button></div>`, (m) => $(".btn-primary", m).addEventListener("click", closeModal));
   };
 
   /* ===================== SETTINGS ===================== */
@@ -671,7 +670,11 @@
     drawInts();
     $("#ints").onclick = (e) => { const b = e.target.closest("[data-i]"); if (!b) return; const k = b.dataset.i; state.integrations[k] = !state.integrations[k]; save(); drawInts(); IP.toast(`${k} ${state.integrations[k] ? "connected (demo)" : "disconnected"}`); };
     $$("[data-n]").forEach((s) => s.onchange = () => { state.notifs[s.dataset.n] = s.checked; save(); IP.toast("Preference saved"); });
-    $("#sSave").onclick = () => { session.name = $("#sN").value.trim() || session.name; session.company = $("#sC").value.trim() || session.company; session.initials = session.name.split(/\s+/).map((p) => p[0]).join("").slice(0, 2).toUpperCase(); IP.store.set("session", session); paintUser(); IP.toast("Profile updated"); };
+    $("#sSave").onclick = async () => {
+      const name = $("#sN").value.trim() || session.name, company = $("#sC").value.trim() || session.company;
+      try { await IP.auth.updateProfile({ name, company }); Object.assign(session, { name, company, initials: IP.auth.initials(name), isNew: false }); paintUser(); IP.toast("Profile updated"); }
+      catch (e) { IP.toast("Could not save: " + e.message); }
+    };
     $("#invite").onclick = () => modal(`<h2>Invite a teammate</h2><br><label class="field"><span>Name</span><input class="input" id="iN"></label><label class="field"><span>Email</span><input class="input" id="iE" type="email"></label><label class="field"><span>Role</span><select class="input" id="iR"><option>Viewer</option><option>Editor</option><option>Admin</option></select></label><div class="modal-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="iGo">Send invite</button></div>`, (m) => {
       $("#iGo", m).onclick = () => { const n = $("#iN", m).value.trim(), e = $("#iE", m).value.trim(); if (!n || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return IP.toast("Enter a name and valid email."); team.push({ n, e, r: $("#iR", m).value }); IP.store.set("team", team); drawTeam(); closeModal(); IP.toast(`Invite recorded for ${n} (demo — no email sent)`); };
     });
@@ -689,7 +692,7 @@
   $("#bellBtn").onclick = (e) => { toggle($("#bellMenu"), e); $("#bellPip").style.display = "none"; state.readNotifs = true; save(); };
   $("#userChip").onclick = (e) => { if (e.target.closest("#userMenu")) return; toggle($("#userMenu"), e); };
   document.addEventListener("click", (e) => { if (!e.target.closest(".dropdown")) $$(".dropdown").forEach((d) => d.classList.remove("open")); if (!e.target.closest(".search")) $("#searchResults").classList.remove("open"); });
-  $("#logoutBtn").onclick = () => { IP.store.del("session"); location.href = "login.html"; };
+  $("#logoutBtn").onclick = async () => { await IP.auth.signOut(); location.href = "login.html"; };
 
   const INDEX = [
     ...Object.entries(TITLES).map(([k, t]) => ({ t, kind: "Page", go: k })),

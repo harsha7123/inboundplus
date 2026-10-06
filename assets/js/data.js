@@ -1,4 +1,5 @@
-/* Demo data — all clients, numbers and people below are fictional sample data */
+/* Public content (plans, methodology, testimonials, blog, contact) is taken from inboundplus.agency.
+   Portal dashboard data (client "Andes Outdoor Co.", metrics, people) is fictional SAMPLE data. */
 window.IPDATA = (function () {
   const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 
@@ -8,49 +9,96 @@ window.IPDATA = (function () {
   const series = (n, start, growth, noise) => Array.from({ length: n }, (_, i) => Math.round(start * Math.pow(1 + growth, i) * (1 + (rnd() - 0.5) * noise)));
 
   const software = [
-    { id: "agent-cs", name: "AI Customer Service Agent", cat: "AI Agents", price: "from $1,500 setup + $250/mo", status: "Popular",
+    { id: "agent-cs", name: "AI Customer Service Agent", cat: "AI Agents", price: "Scope & quote on request", status: "Popular",
       desc: "A Claude-powered assistant for WhatsApp, web chat and email that answers product, order and return questions 24/7.",
       bullets: ["Trained on your catalogue & policies", "Hands off to a human with full context", "Spanish & English"] },
-    { id: "agent-ads", name: "Ad Copy & Creative Agent", cat: "AI Agents", price: "from $900 setup + $150/mo",
+    { id: "agent-ads", name: "Ad Copy & Creative Agent", cat: "AI Agents", price: "Scope & quote on request",
       desc: "Generates and tests Meta and Google ad variations from your best-selling products and brand voice.",
       bullets: ["Weekly variant batches", "Performance-based learning", "Approval workflow in the portal"] },
-    { id: "claude-skills", name: "Claude Skills Pack for E-commerce", cat: "AI Agents", price: "from $600", status: "New",
+    { id: "claude-skills", name: "Claude Skills Pack for E-commerce", cat: "AI Agents", price: "Scope & quote on request", status: "New",
       desc: "Reusable Claude skills for product descriptions, SEO briefs, review replies and weekly KPI summaries.",
       bullets: ["Brand-voice guardrails", "Runs inside your team's Claude", "Custom skills on request"] },
-    { id: "store-build", name: "Shopify / WooCommerce Store Build", cat: "E-commerce", price: "from $6,000",
+    { id: "store-build", name: "Shopify / WooCommerce Store Build", cat: "E-commerce", price: "Scope & quote on request",
       desc: "Conversion-focused storefronts with fast themes, structured data and checkout optimisation.",
       bullets: ["Mobile-first design", "Payment & shipping set-up (LatAm + US)", "Core Web Vitals green"] },
-    { id: "cro-kit", name: "CRO Experiment Kit", cat: "E-commerce", price: "from $1,200/mo",
+    { id: "cro-kit", name: "CRO Experiment Kit", cat: "E-commerce", price: "Scope & quote on request",
       desc: "A/B testing on product pages, cart and checkout, with results shown live in your portal.",
       bullets: ["2–4 experiments per month", "Heatmaps & session insights", "Revenue-impact reporting"] },
-    { id: "seo-suite", name: "SEO Growth Suite", cat: "SEO", price: "from $900/mo",
+    { id: "seo-suite", name: "SEO Growth Suite", cat: "SEO", price: "Scope & quote on request",
       desc: "Technical audits, keyword tracking, AI-assisted content briefs and backlink monitoring.",
       bullets: ["Weekly rank tracking", "Search Console integration", "Programmatic SEO pages"] },
-    { id: "bi-dash", name: "Executive Growth Dashboard", cat: "Analytics", price: "from $2,500",
+    { id: "bi-dash", name: "Executive Growth Dashboard", cat: "Analytics", price: "Scope & quote on request",
       desc: "GA4, Meta, Google Ads, HubSpot and store data unified into one live dashboard.",
       bullets: ["Daily refresh", "Cohort & LTV analysis", "Automated PDF reports"] },
-    { id: "hubspot-int", name: "HubSpot ↔ Store ↔ ERP Integration", cat: "Integrations", price: "from $3,500",
+    { id: "hubspot-int", name: "HubSpot ↔ Store ↔ ERP Integration", cat: "Integrations", price: "Scope & quote on request",
       desc: "Sync orders, customers and inventory between HubSpot, your store and ERP (incl. SAP Business One).",
       bullets: ["Two-way sync", "Abandoned-cart workflows", "Error monitoring"] },
-    { id: "whatsapp", name: "WhatsApp Commerce Automation", cat: "Integrations", price: "from $1,800",
+    { id: "whatsapp", name: "WhatsApp Commerce Automation", cat: "Integrations", price: "Scope & quote on request",
       desc: "Catalogue, order status, payment links and re-engagement campaigns via the WhatsApp Business API.",
       bullets: ["Template approvals handled", "CRM sync", "Broadcast analytics"] },
   ];
 
+  // Real articles & ebooks from inboundplus.agency (Spanish)
   const blog = [
-    { id: 1, title: "How AI agents cut e-commerce support costs by 40%", cat: "AI", date: "Sep 28, 2026", read: "6 min", icon: "bot",
-      excerpt: "A practical look at deploying a customer-service agent on WhatsApp and web chat — what to automate first and what to keep human." },
-    { id: 2, title: "The 2026 checkout optimisation checklist", cat: "CRO", date: "Sep 19, 2026", read: "8 min", icon: "cart",
-      excerpt: "Twelve checkout fixes we test first, ranked by average lift across Latin American stores." },
-    { id: 3, title: "Programmatic SEO for product catalogues", cat: "SEO", date: "Sep 10, 2026", read: "7 min", icon: "search",
-      excerpt: "Turning thousands of SKUs into high-intent landing pages without thin content penalties." },
-    { id: 4, title: "Reading your GA4 funnel like a growth team", cat: "Analytics", date: "Aug 30, 2026", read: "5 min", icon: "chart",
-      excerpt: "Which drop-off points matter, how to segment by device and channel, and what to fix next." },
-    { id: 5, title: "Claude skills every marketing team should have", cat: "AI", date: "Aug 21, 2026", read: "6 min", icon: "zap",
-      excerpt: "Product copy, review replies, weekly KPI digests — reusable skills that keep brand voice consistent." },
-    { id: 6, title: "Connecting HubSpot to your store and ERP", cat: "Integrations", date: "Aug 12, 2026", read: "9 min", icon: "plug",
-      excerpt: "Architecture patterns for syncing customers, orders and stock without double entry." },
+    { id: 1, title: "Optimizar tu ecommerce en 2025: 7 pasos clave para el éxito", cat: "Article", lang: "ES", icon: "cart", url: "https://inboundplus.agency/optimizar-tu-ecommerce-en-2025-7-pasos-clave-para-el-exito/",
+      excerpt: "Article on the InboundPlus blog." },
+    { id: 2, title: "¿Cómo utilizar el marketing digital para impulsar el alcance de su bufete de abogados?", cat: "Article", lang: "ES", icon: "target", url: "https://inboundplus.agency/como-utilizar-el-marketing-digital-para-impulsar-el-alcance-de-su-bufete-de-abogados/",
+      excerpt: "Article on the InboundPlus blog." },
+    { id: 3, title: "¿Cómo capacitar a los trabajadores? ¡Toma la decisión correcta!", cat: "Article", lang: "ES", icon: "users", url: "https://inboundplus.agency/como-capacitar-a-los-trabajadores-toma-la-decision-correcta/",
+      excerpt: "Article on the InboundPlus blog." },
+    { id: 4, title: "¿Cómo mantener a sus colaboradores formados e informados sobre las tendencias del marketing digital?", cat: "Article", lang: "ES", icon: "blog", url: "https://inboundplus.agency/como-mantener-a-sus-colaboradores-formados-e-informados-sobre-las-tendencias-del-marketing-digital/",
+      excerpt: "Article on the InboundPlus blog." },
+    { id: 5, title: "Potencia tu Ecommerce con la metodología Inbound", cat: "Ebook", lang: "ES", icon: "download", url: "https://inboundplus.agency/ebook-potencia-tu-ecommerce-con-la-metodologia-inbound/",
+      excerpt: "Key strategies for an online business: how inbound tools can power an online store." },
+    { id: 6, title: "Las métricas para evaluar y auditar tus estrategias de Marketing Digital", cat: "Ebook", lang: "ES", icon: "chart", url: "https://inboundplus.agency/ebook-las-metricas-para-evaluar-y-auditar-tus-estrategias-de-marketing-digital/",
+      excerpt: "How to measure the success of your digital marketing strategies and manage your resources." },
+    { id: 7, title: "Cómo incrementar las ventas de tu empresa con Inbound Marketing", cat: "Ebook", lang: "ES", icon: "zap", url: "https://inboundplus.agency/ebook-como-incrementar-las-ventas-de-tu-empresa-con-inbound/",
+      excerpt: "Why cold calls limit your leads, and how to apply a more effective strategy." },
   ];
+
+  // Real service packages (inboundplus.agency/precios)
+  const plans = [
+    { name: "Ecommerce Growth Blueprint", term: "One-time", price: "USD 2,000", billing: "from · one-time payment",
+      tagline: "Organise your e-commerce and define what to move first to grow in the next 90 days.",
+      idealFor: "Companies with an active e-commerce that need order, focus and a clear roadmap.",
+      includes: ["Express growth diagnosis", "Bottleneck identification", "Minimum viable funnel and KPIs", "90-day action plan", "Priorities, quick wins and AI assistant"],
+      cta: "https://inboundplus.agency/auditoria-express-gratis-para-ecommerce/", ctaText: "Request your free diagnosis" },
+    { name: "Ecommerce Growth Advisory", term: "Monthly · 4-month minimum", price: "USD 3,000", billing: "from · per month",
+      tagline: "We support your team to improve e-commerce decisions, priorities and growth.",
+      idealFor: "Companies with an active e-commerce and an internal team that need direction, focus and better decisions.",
+      includes: ["4 strategy sessions per month", "Monthly priorities plan", "Campaign and e-commerce review", "Team coaching", "AI and support processes"],
+      cta: "https://inboundplus.agency/consultoria-estrategica/", ctaText: "Request a strategic consultation" },
+    { name: "Commerce Growth Partner", term: "6-month enterprise project", price: "USD 60,000", billing: "from · 6-month engagement",
+      tagline: "Strategic direction + commercial growth execution to scale sales and profitability.",
+      idealFor: "Companies with active e-commerce and sales channels looking to scale with direction, data and AI.",
+      includes: ["Campaign management and optimisation", "Continuous UX/CRO optimisation", "4 strategy sessions per month", "Monthly meeting with management", "Sales scenarios + AI Growth OS", "Reports, analysis and strategic direction"],
+      cta: "https://inboundplus.agency/consultoria-estrategica/", ctaText: "Request a strategic consultation" },
+  ];
+
+  const methodology = [
+    { title: "Diagnosis & context", text: "We analyse your e-commerce, business model, key metrics and current digital channel to understand what is holding back growth." },
+    { title: "Growth system design", text: "We define the funnel, priorities, quick wins and KPIs, and build an action roadmap aligned to your goals and resources." },
+    { title: "Activation with your team + AI", text: "Depending on the service, we train, co-implement or lead execution, supported by AI tools to analyse, optimise and decide faster." },
+    { title: "Optimisation & scaling", text: "We measure results, adjust the plan and define next steps to keep improving sales and profitability." },
+  ];
+
+  // Real testimonials (inboundplus.agency/testimonios), original Spanish quotes
+  const stories = [
+    { brand: "Olympikus", logo: "assets/img/clients/olympikus.png", result: "+100% sales", person: "Denisse Mora, Jefa de Marketing", text: "“Sentimos que el incremento ha sido abismal, eso está totalmente medido. Hemos crecido más del 100% en nuestras ventas.”" },
+    { brand: "Pekokis", logo: "assets/img/clients/pekokis.png", result: "+40% e-commerce sales", person: "Mirella Véliz, Manager", text: "“Una de nuestras mejores campañas digitales: +30% en ventas totales y +40% en ventas del ecommerce frente al año anterior.”" },
+    { brand: "Ibero Librerías", logo: "assets/img/clients/ibero.png", result: "Goal-driven growth", person: "Marco Gavino, Ecommerce Manager", text: "“Diego siempre se mide con base en objetivos, estrategias y resultados, ayudando a aumentar más las ventas en el canal online.”" },
+    { brand: "Azaleia Perú", logo: "assets/img/clients/azaleia.png", result: "Close to sales targets", person: "Lenin Bayona, Ecommerce Manager", text: "“Gracias a los lineamientos asertivos que nos ha dado la agencia, estamos a punto de llegar a los objetivos de venta.”" },
+    { brand: "SOKSO Moda", logo: "assets/img/clients/sokso.png", result: "Better customer service", person: "Fernando Ventura, Gerente general", text: "“InboundPlus nos ayudó muchísimo para poder resolver los temas de atención al cliente, definir estrategias digitales y encontrar clientes ideales.”" },
+    { brand: "MedicGo", logo: "assets/img/clients/medicgo.png", result: "Needed a new call center", person: "Carlos Casado, Gerente general", text: "“Los resultados luego de contratar la campaña fue que aumentaron el número de llamadas. A tal punto que tuvimos que generar un call center…”" },
+  ];
+
+  const clientLogos = [
+    { name: "Azaleia", file: "azaleia.png" }, { name: "Olympikus", file: "olympikus.png" }, { name: "Claro Perú", file: "claro.png" },
+    { name: "Universidad ESAN", file: "esan.png" }, { name: "PUCP", file: "pucp.png" }, { name: "UTP", file: "utp.png" },
+    { name: "Viale", file: "viale.png" }, { name: "SOKSO", file: "sokso.png" }, { name: "Ibero Librerías", file: "ibero.png" },
+    { name: "Pekokis", file: "pekokis.png" }, { name: "MedicGo", file: "medicgo.png" }, { name: "World Vision Perú", file: "worldvision.png" },
+  ];
+
 
   const revenue = series(12, 38000, 0.065, 0.12);
   const sessions = series(12, 52000, 0.045, 0.1);
@@ -59,10 +107,10 @@ window.IPDATA = (function () {
   return {
     months,
     software,
-    blog,
+    blog, plans, methodology, stories, clientLogos,
     client: {
       company: "Andes Outdoor Co.",
-      plan: "Commerce Growth Partner",
+      plan: "Commerce Growth Partner", planTerm: "6-month engagement · from USD 60,000",
       manager: { name: "Lucía Ramos", role: "Account Manager", initials: "LR" },
       retainer: { hours: 120, used: 86 },
     },
@@ -159,19 +207,19 @@ window.IPDATA = (function () {
     tasks: [
       { id: "t1", title: "Approve new homepage hero", col: "Waiting on you", owner: "You", due: "Oct 8" },
       { id: "t2", title: "Send winter product photos", col: "Waiting on you", owner: "You", due: "Oct 10" },
-      { id: "t3", title: "Checkout A/B test #4", col: "In progress", owner: "Aarón C.", due: "Oct 15" },
-      { id: "t4", title: "WhatsApp template approval", col: "In progress", owner: "Raúl L.", due: "Oct 12" },
+      { id: "t3", title: "Checkout A/B test #4", col: "In progress", owner: "CRO team", due: "Oct 15" },
+      { id: "t4", title: "WhatsApp template approval", col: "In progress", owner: "Web team", due: "Oct 12" },
       { id: "t5", title: "October SEO briefs (6)", col: "To do", owner: "Content team", due: "Oct 20" },
       { id: "t6", title: "Black Friday campaign plan", col: "To do", owner: "Lucía R.", due: "Oct 25" },
-      { id: "t7", title: "GA4 enhanced e-commerce events", col: "Done", owner: "Rhonnald A.", due: "Oct 2" },
-      { id: "t8", title: "Collection page speed fixes", col: "Done", owner: "Raúl L.", due: "Sep 30" },
+      { id: "t7", title: "GA4 enhanced e-commerce events", col: "Done", owner: "Data team", due: "Oct 2" },
+      { id: "t8", title: "Collection page speed fixes", col: "Done", owner: "Web team", due: "Sep 30" },
     ],
     deployments: [
-      { id: "d-1043", app: "Storefront (Shopify)", env: "Production", version: "v2.8.1", status: "success", by: "Raúl L.", when: "Today, 09:42", notes: "Faster collection pages, new size guide" },
+      { id: "d-1043", app: "Storefront (Shopify)", env: "Production", version: "v2.8.1", status: "success", by: "Web team", when: "Today, 09:42", notes: "Faster collection pages, new size guide" },
       { id: "d-1042", app: "AI Support Agent", env: "Staging", version: "v0.9.0", status: "success", by: "Synchronous CI", when: "Yesterday, 18:10", notes: "Returns & exchanges intent added" },
       { id: "d-1041", app: "HubSpot Sync Service", env: "Production", version: "v1.4.2", status: "success", by: "Synchronous CI", when: "Oct 3, 15:27", notes: "Inventory sync every 5 min" },
-      { id: "d-1040", app: "Storefront (Shopify)", env: "Staging", version: "v2.8.0", status: "failed", by: "Raúl L.", when: "Oct 2, 11:05", notes: "Theme check failed — fixed in v2.8.1" },
-      { id: "d-1039", app: "Growth Dashboard", env: "Production", version: "v3.1.0", status: "success", by: "Rhonnald A.", when: "Sep 29, 10:00", notes: "Cohort retention view" },
+      { id: "d-1040", app: "Storefront (Shopify)", env: "Staging", version: "v2.8.0", status: "failed", by: "Web team", when: "Oct 2, 11:05", notes: "Theme check failed — fixed in v2.8.1" },
+      { id: "d-1039", app: "Growth Dashboard", env: "Production", version: "v3.1.0", status: "success", by: "Data team", when: "Sep 29, 10:00", notes: "Cohort retention view" },
     ],
     apps: [
       { name: "Storefront (Shopify)", uptime: 99.98, version: "v2.8.1", env: "Production", health: "Healthy" },
@@ -193,7 +241,7 @@ window.IPDATA = (function () {
       { id: "r5", name: "Checkout UX Study", type: "Research", date: "Aug 22, 2026", pages: 11 },
     ],
     files: [
-      { name: "Homepage_Hero_v3.fig", type: "fig", size: "8.2 MB", by: "Aarón C.", status: "Needs approval" },
+      { name: "Homepage_Hero_v3.fig", type: "fig", size: "8.2 MB", by: "CRO team", status: "Needs approval" },
       { name: "Winter_Campaign_Brief.pdf", type: "pdf", size: "1.1 MB", by: "Lucía R.", status: "Approved" },
       { name: "Product_Feed_Oct.xlsx", type: "xls", size: "640 KB", by: "You", status: "Shared" },
       { name: "Trail_Runner_Ad_15s.mp4", type: "mp4", size: "24 MB", by: "Creative team", status: "Needs approval" },
@@ -204,7 +252,7 @@ window.IPDATA = (function () {
       { id: "m1", with: "Lucía Ramos", role: "Account Manager", initials: "LR", unread: true,
         msgs: [{ me: false, t: "Hi! The September report is ready in Reports. Revenue is up 18% vs August 🎉", at: "09:12" },
                { me: false, t: "Could you also approve the new homepage hero in Files when you have a minute?", at: "09:13" }] },
-      { id: "m2", with: "Raúl Luna", role: "Web Developer", initials: "RL", unread: false,
+      { id: "m2", with: "Web team", role: "Store development", initials: "WT", unread: false,
         msgs: [{ me: true, t: "Is the size guide live?", at: "Yesterday" }, { me: false, t: "Yes — deployed this morning in v2.8.1.", at: "Yesterday" }] },
       { id: "m3", with: "Support", role: "InboundPlus help desk", initials: "IP", unread: false,
         msgs: [{ me: false, t: "Welcome to your client hub! Ask us anything here.", at: "Sep 1" }] },

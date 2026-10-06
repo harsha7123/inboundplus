@@ -4,20 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>InboundPlus Client Hub</title>
+  <meta name="description" content="InboundPlus — Ecommerce Growth Partner. Client portal for growth systems + AI.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/img/isotipo.png">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <nav class="site-nav" id="siteNav">
   <div class="wrap">
-    <a class="brand" href="index.html"><span class="brand-mark">i+</span><span>InboundPlus<small>Client Hub</small></span></a>
+    <a class="brand" href="index.html"><img class="brand-logo" src="assets/img/logo.png" alt="InboundPlus"><span class="brand-sub">Client Hub</span></a>
     <button class="menu-toggle" aria-label="Open menu" onclick="document.getElementById('siteNav').classList.toggle('open')"><span data-icon="menu" style="display:inline-block;width:20px;height:20px"></span></button>
     <div class="site-links">
       <a href="#services">Services</a>
-      <a href="#software">Software</a>
-      <a href="#portal">Client Portal</a>
+      <a href="#method">Methodology</a>
+      <a href="#software">AI &amp; Software</a>
+      <a href="#stories">Success stories</a>
       <a href="#blog">Blog</a>
       <a href="#contact">Contact</a>
     </div>
@@ -31,22 +34,27 @@
 <header class="hero">
   <div class="wrap">
     <div class="fade-in">
-      <span class="eyebrow"><span class="dot"></span> Your e-commerce growth team, powered by AI</span>
-      <h1>Every campaign, deployment and result — <em>in one client portal.</em></h1>
-      <p class="lead">Log in to see live sales analytics, SEO rankings, ad performance, AI agents, project progress and reports. No more chasing spreadsheets and email threads.</p>
+      <span class="eyebrow"><span class="dot"></span> Ecommerce Growth Partner</span>
+      <h1>We scale your e-commerce sales with <em>growth systems + AI</em></h1>
+      <p class="lead">We implement systems and strategies that increase sales, optimise your ROAS and organise your digital operation — now with a client portal to follow every result.</p>
       <div class="hero-cta">
-        <a class="btn btn-primary" href="login.html?mode=register">Create client account</a>
-        <a class="btn btn-ghost" href="login.html">Client login</a>
+        <a class="btn btn-primary" href="login.html">Client login</a>
+        <a class="btn btn-ghost" href="https://inboundplus.agency/auditoria-express-gratis-para-ecommerce/" target="_blank" rel="noopener">Evaluate my e-commerce growth</a>
       </div>
       <div class="hero-stats">
-        <div><b>+40%</b><span>avg. e-commerce sales lift</span></div>
-        <div><b>50+</b><span>brands supported</span></div>
-        <div><b>24/7</b><span>AI agents on duty</span></div>
+        <div><b>+50</b><span>brands in LATAM scaling with our systems</span></div>
+        <div><b>+40%</b><span>e-commerce sales — Pekokis</span></div>
+        <div><b>+100%</b><span>sales growth — Olympikus</span></div>
+      </div>
+      <div class="partners">
+        <span>Official partners</span>
+        <img src="assets/img/partner-google.png" alt="Google Partner">
+        <img src="assets/img/partner-meta.png" alt="Meta Business Partner">
+        <img src="assets/img/partner-hubspot.png" alt="HubSpot Partner">
       </div>
     </div>
     <div class="scene-box" id="heroScene">
-      <div class="scene-float" style="top:18px;right:18px">Revenue this month<b>$84,920</b><span class="badge green">▲ 18.2%</span></div>
-      <div class="scene-float" style="top:96px;left:18px">ROAS<b>4.6×</b></div>
+      <div class="scene-float" style="top:18px;right:18px">Client portal preview<b>Revenue by channel</b><span class="sample-pill">Sample data</span></div>
       <span class="scene-hint">Drag to rotate · hover a bar</span>
     </div>
   </div>
@@ -55,64 +63,82 @@
 <section class="block" id="services">
   <div class="wrap">
     <div class="section-head">
-      <h2>Services that grow online stores</h2>
-      <p>Strategy, creative and engineering under one roof — with every deliverable tracked inside your portal.</p>
+      <h2>Our systems to scale your e-commerce</h2>
+      <p>Three services designed to increase sales, improve profitability and optimise the digital operation of brands with an e-commerce channel.</p>
     </div>
-    <div class="grid-3" id="servicesGrid"></div>
+    <div class="grid-3" id="plans"></div>
   </div>
 </section>
 
-<section class="block alt" id="software">
+<section class="block alt" id="method">
   <div class="wrap">
     <div class="section-head">
-      <h2>Software &amp; AI solutions</h2>
-      <p>Ready-to-deploy agents, integrations and tools. Request any of them from your portal and track the rollout live.</p>
+      <h2>How we work to scale your sales</h2>
+      <p>A four-step method to design, activate and optimise growth systems based on data and artificial intelligence.</p>
+    </div>
+    <div class="grid-4" id="steps"></div>
+  </div>
+</section>
+
+<section class="block" id="software">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="sample-pill">Proposed with Synchronous Consulting</span>
+      <h2 style="margin-top:12px">AI &amp; software solutions</h2>
+      <p>Technology add-ons that can be delivered through the portal — AI agents, Claude skills, integrations, store development and SEO tooling.</p>
     </div>
     <div class="filter-row" id="swFilters"></div>
     <div class="grid-3" id="swGrid"></div>
   </div>
 </section>
 
-<section class="block" id="portal">
+<section class="block alt" id="stories">
   <div class="wrap">
     <div class="section-head">
-      <h2>What you get after logging in</h2>
-      <p>One login. Everything about your growth — updated daily.</p>
+      <h2>Growth stories</h2>
+      <p>Results shared by marketing, sales and general managers who work with InboundPlus.</p>
     </div>
-    <div class="grid-4" id="portalFeatures"></div>
+    <div class="grid-3" id="quotes"></div>
+    <div class="logo-strip" id="logos" style="margin-top:34px"></div>
+    <p style="text-align:center;margin-top:22px"><a href="https://inboundplus.agency/testimonios/" target="_blank" rel="noopener">See all testimonials on inboundplus.agency →</a></p>
   </div>
 </section>
 
-<section class="block alt" id="blog">
+<section class="block" id="blog">
   <div class="wrap">
     <div class="section-head">
-      <h2>From the blog</h2>
-      <p>Playbooks on AI, CRO, SEO and analytics for e-commerce teams.</p>
+      <h2>Blog &amp; ebooks</h2>
+      <p>Latest articles and free ebooks from the InboundPlus team.</p>
     </div>
     <div class="filter-row" id="blogFilters"></div>
     <div class="grid-3" id="blogGrid"></div>
   </div>
 </section>
 
-<section class="block" id="contact">
+<section class="block alt" id="contact">
   <div class="wrap">
     <div class="cta-band">
       <div>
-        <h2>Ready to see your numbers in 3D?</h2>
-        <p>Create your client account or request a free AI growth evaluation.</p>
+        <h2>Let's talk about your goals</h2>
+        <p>Book a free strategic session with a specialist, or log in to your client portal.</p>
       </div>
       <div class="flex wrap-gap">
-        <a class="btn btn-ghost" href="login.html?mode=register">Register</a>
+        <a class="btn btn-ghost" href="https://inboundplus.agency/consultoria-estrategica/" target="_blank" rel="noopener">Book a session</a>
         <a class="btn btn-primary" href="login.html">Client login</a>
       </div>
+    </div>
+    <div class="grid-3" style="margin-top:24px">
+      <div class="card"><h3>Lima, Perú</h3><p>+51 930 724 378<br><a href="mailto:hola@inboundplus.agency">hola@inboundplus.agency</a></p></div>
+      <div class="card"><h3>Florida, United States</h3><p>+1 561 817 6659<br><a href="mailto:hello@inboundplus.us">hello@inboundplus.us</a></p></div>
+      <div class="card"><h3>Website</h3><p><a href="https://inboundplus.agency" target="_blank" rel="noopener">inboundplus.agency</a><br>Services · Methodology · FAQ</p></div>
     </div>
   </div>
 </section>
 
 <footer class="site-footer">
   <div class="wrap">
-    <span>© 2026 InboundPlus · Lima · Florida</span>
-    <span>Demo portal prototype prepared by Synchronous Consulting — sample data only.</span>
+    <span>©2026 InboundPlus | Ecommerce Growth Partner</span>
+    <span>Client portal prototype by Synchronous Consulting · portal dashboards show sample data</span>
   </div>
 </footer>
 
@@ -123,26 +149,28 @@
 (function () {
   const D = IPDATA, esc = IP.esc;
   IP.hydrateIcons();
+  document.querySelectorAll(".site-links a").forEach((a) => a.addEventListener("click", () => document.getElementById("siteNav").classList.remove("open")));
 
-  // Hero 3D: 4 channels × 6 months
-  const hv = D.analytics.channelMonthly.slice(0, 4);
   IP.barScene(document.getElementById("heroScene"), {
-    values: hv,
-    colors: [0x12305e, 0x2563eb, 0x60a5fa, 0xbfd3f7],
-    tooltip: (r, c, v) => `${D.analytics.channels.labels[r]} · ${D.months.slice(-6)[c]}: <b>$${v}k</b>`,
+    values: D.analytics.channelMonthly.slice(0, 4),
+    colors: [0xf26b35, 0x5551d3, 0x008fff, 0xfdc9ad],
+    tooltip: (r, c, v) => `${D.analytics.channels.labels[r]} · ${D.months.slice(-6)[c]}: <b>$${v}k</b> <small>(sample)</small>`,
     radius: 15,
   });
 
-  const services = [
-    ["target", "Growth strategy", "AI-assisted growth evaluation, funnel diagnosis and a 90-day roadmap.", "Blueprint from $2,000"],
-    ["ads", "Performance marketing", "Meta, Google and TikTok campaigns managed for ROAS, not clicks.", "From $3,000/mo"],
-    ["cart", "E-commerce development", "Shopify and WooCommerce builds, checkout optimisation and CRO testing.", "From $6,000"],
-    ["search", "SEO & content", "Technical SEO, AI content briefs, programmatic pages and link building.", "From $900/mo"],
-    ["bot", "AI agents & Claude skills", "Customer-service, ad-copy and analyst agents trained on your brand.", "From $1,500"],
-    ["plug", "Integrations & data", "HubSpot, store, ERP and ad-platform data unified into one dashboard.", "From $2,500"],
-  ];
-  document.getElementById("servicesGrid").innerHTML = services.map(([i, t, d, p]) => `
-    <div class="card tilt"><div class="pop"><div class="svc-icon">${IP.icon(i)}</div><h3>${t}</h3><p>${d}</p><div class="price">${p}</div></div></div>`).join("");
+  // Real service packages (inboundplus.agency)
+  document.getElementById("plans").innerHTML = D.plans.map((p, i) => `
+    <div class="card tilt plan-card ${i === 2 ? "featured" : ""}">
+      <span class="badge ${i === 2 ? "blue" : "gray"}" style="align-self:flex-start">${esc(p.term)}</span>
+      <h3>${esc(p.name)}</h3><p>${esc(p.tagline)}</p>
+      <div class="amount">${esc(p.price)}<small>${esc(p.billing)}</small></div>
+      <p><b style="color:var(--navy)">Ideal for:</b> ${esc(p.idealFor)}</p>
+      <ul>${p.includes.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      <a class="btn ${i === 2 ? "btn-primary" : "btn-ghost"}" style="margin-top:auto" href="${p.cta}" target="_blank" rel="noopener">${esc(p.ctaText)}</a>
+    </div>`).join("");
+
+  document.getElementById("steps").innerHTML = D.methodology.map((s, i) => `
+    <div class="card tilt step"><div class="pop"><div class="num-badge">0${i + 1}</div><h3 style="font-size:16px">${esc(s.title)}</h3><p>${esc(s.text)}</p></div></div>`).join("");
 
   function chips(el, cats, onPick) {
     let cur = "All";
@@ -154,8 +182,7 @@
   }
 
   function drawSoftware(cat) {
-    const list = D.software.filter((s) => cat === "All" || s.cat === cat);
-    document.getElementById("swGrid").innerHTML = list.map((s) => `
+    document.getElementById("swGrid").innerHTML = D.software.filter((s) => cat === "All" || s.cat === cat).map((s) => `
       <div class="card tilt sw-card fade-in">
         <div class="sw-top"><span class="badge blue">${esc(s.cat)}</span>${s.status ? `<span class="badge ${s.status === "New" ? "green" : "amber"}">${s.status}</span>` : ""}</div>
         <h3>${esc(s.name)}</h3><p>${esc(s.desc)}</p>
@@ -168,27 +195,17 @@
   chips(document.getElementById("swFilters"), [...new Set(D.software.map((s) => s.cat))], drawSoftware);
   drawSoftware("All");
 
-  const feats = [
-    ["chart", "Live analytics", "Revenue, conversion, AOV, funnels and cohorts with 3D drill-downs."],
-    ["search", "SEO tracking", "Keyword positions, site health and Search Console data."],
-    ["rocket", "Deployments", "Every release of your store, agents and integrations — with status."],
-    ["bot", "AI agents", "Chat with your agents, see conversations resolved and hours saved."],
-    ["report", "Reports", "Monthly and quarterly reports, downloadable any time."],
-    ["survey", "Surveys", "Share feedback and see results in real time."],
-    ["file", "Files & approvals", "Approve creatives and share assets in one place."],
-    ["card", "Billing", "Invoices, retainer hours and plan details."],
-  ];
-  document.getElementById("portalFeatures").innerHTML = feats.map(([i, t, d]) => `
-    <div class="card tilt"><div class="pop"><div class="svc-icon">${IP.icon(i)}</div><h3 style="font-size:16px">${t}</h3><p>${d}</p></div></div>`).join("");
+  document.getElementById("quotes").innerHTML = D.stories.map((q) => `
+    <div class="card tilt quote"><img src="${q.logo}" alt="${esc(q.brand)}" style="height:40px;margin-bottom:12px"><b>${esc(q.result)}</b>${esc(q.text)}${q.person ? `<p style="margin-top:10px;font-size:13px">— ${esc(q.person)}, ${esc(q.brand)}</p>` : ""}</div>`).join("");
+  document.getElementById("logos").innerHTML = D.clientLogos.map((l) => `<div><img src="assets/img/clients/${l.file}" alt="${esc(l.name)}" title="${esc(l.name)}"></div>`).join("");
 
   function drawBlog(cat) {
-    const list = D.blog.filter((b) => cat === "All" || b.cat === cat);
-    document.getElementById("blogGrid").innerHTML = list.map((b) => `
-      <article class="card tilt blog-card fade-in">
+    document.getElementById("blogGrid").innerHTML = D.blog.filter((b) => cat === "All" || b.cat === cat).map((b) => `
+      <a class="card tilt blog-card fade-in" href="${b.url}" target="_blank" rel="noopener" style="color:inherit">
         <div class="blog-thumb">${IP.icon(b.icon)}</div>
-        <div class="blog-body"><div class="blog-meta"><span class="badge gray">${esc(b.cat)}</span><span>${b.date}</span><span>${b.read}</span></div>
+        <div class="blog-body"><div class="blog-meta"><span class="badge gray">${esc(b.cat)}</span><span>${esc(b.lang)}</span></div>
         <h3>${esc(b.title)}</h3><p>${esc(b.excerpt)}</p></div>
-      </article>`).join("");
+      </a>`).join("");
     IP.tilt();
   }
   chips(document.getElementById("blogFilters"), [...new Set(D.blog.map((b) => b.cat))], drawBlog);

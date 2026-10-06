@@ -5,21 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Log in · InboundPlus</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/img/isotipo.png">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 <div class="auth-page">
   <aside class="auth-side">
-    <a class="brand" href="index.html"><span class="brand-mark">i+</span><span>InboundPlus<small>Client Hub</small></span></a>
-    <h2 style="margin-top:36px">Your growth, in three dimensions.</h2>
-    <p>Sales, SEO, ads, AI agents, deployments and reports — all in one secure client portal.</p>
+    <a class="brand" href="index.html"><img class="brand-logo lg" src="assets/img/logo.png" alt="InboundPlus"><span class="brand-sub">Client Hub</span></a>
+    <h2 style="margin-top:36px">Scale your e-commerce with growth systems + AI.</h2>
+    <p>Sales, SEO, campaigns, AI agents, deployments and reports, all in one client portal.</p>
     <div class="scene-box" id="authScene"><span class="scene-hint">Drag to rotate</span></div>
   </aside>
 
   <main class="auth-main">
     <div class="auth-card fade-in">
-      <div class="tabs" role="tablist">
+      <div class="tabs" role="tablist" id="tabs">
         <button id="tabLogin" class="active" role="tab">Log in</button>
         <button id="tabReg" role="tab">Register</button>
       </div>
@@ -31,19 +32,19 @@
         <label class="field"><span>Work email</span><input class="input" type="email" id="lEmail" autocomplete="username" placeholder="you@company.com" required></label>
         <label class="field"><span>Password</span><input class="input" type="password" id="lPass" autocomplete="current-password" placeholder="••••••••" required></label>
         <div class="auth-foot">
-          <label class="flex" style="gap:8px;font-weight:500"><input type="checkbox" checked> Remember me</label>
+          <span></span>
           <a href="#" id="forgot">Forgot password?</a>
         </div>
         <div class="form-error" id="lErr" role="alert"></div>
-        <button class="btn btn-primary" style="width:100%" type="submit">Log in</button>
-        <div class="divider">or</div>
-        <button class="btn btn-ghost" style="width:100%" type="button" id="demoBtn">Explore the demo client account</button>
+        <button class="btn btn-primary" style="width:100%" type="submit" id="lBtn">Log in</button>
+        <div id="demoWrap"><div class="divider">or</div>
+        <button class="btn btn-ghost" style="width:100%" type="button" id="demoBtn">Explore the demo client account</button></div>
       </form>
 
       <!-- Register -->
       <form id="regForm" novalidate hidden>
         <h1>Create your account</h1>
-        <p class="sub">Set up your company's client portal in under a minute.</p>
+        <p class="sub">Set up your company's client portal.</p>
         <div class="row-2">
           <label class="field"><span>Full name</span><input class="input" id="rName" autocomplete="name" required></label>
           <label class="field"><span>Company</span><input class="input" id="rCompany" autocomplete="organization" required></label>
@@ -55,75 +56,123 @@
             <select class="input" id="rPlatform"><option>Shopify</option><option>WooCommerce</option><option>VTEX</option><option>Magento</option><option>Other / none yet</option></select></label>
         </div>
         <label class="field"><span>Main goal</span>
-          <select class="input" id="rGoal"><option>Increase online sales</option><option>Launch a new store</option><option>Automate with AI agents</option><option>Improve SEO</option><option>Better reporting</option></select></label>
+          <select class="input" id="rGoal"><option>Increase online sales</option><option>Improve ROAS</option><option>Organise our digital operation</option><option>Automate with AI</option><option>Better reporting</option></select></label>
         <label class="field"><span>Password <small class="muted">(min. 8 characters)</small></span><input class="input" type="password" id="rPass" autocomplete="new-password" required></label>
-        <label class="flex" style="gap:8px;font-size:13px;margin-bottom:14px"><input type="checkbox" id="rTerms"> I agree to the terms of service and privacy policy</label>
+        <label class="flex" style="gap:8px;font-size:13px;margin-bottom:14px"><input type="checkbox" id="rTerms"> I agree to the <a href="https://inboundplus.agency/politica-de-privacidad-y-uso-de-datos/" target="_blank" rel="noopener">privacy &amp; data policy</a></label>
         <div class="form-error" id="rErr" role="alert"></div>
-        <button class="btn btn-primary" style="width:100%" type="submit">Create account</button>
+        <button class="btn btn-primary" style="width:100%" type="submit" id="rBtn">Create account</button>
       </form>
 
-      <p class="demo-note"><b>Prototype:</b> this is a front-end demo. Accounts are stored only in this browser, and no data is sent anywhere.</p>
+      <!-- New password (after reset email) -->
+      <form id="resetForm" novalidate hidden>
+        <h1>Set a new password</h1>
+        <p class="sub">Choose a new password for your account.</p>
+        <label class="field"><span>New password <small class="muted">(min. 8 characters)</small></span><input class="input" type="password" id="nPass" autocomplete="new-password" required></label>
+        <div class="form-error" id="nErr" role="alert"></div>
+        <button class="btn btn-primary" style="width:100%" type="submit">Update password</button>
+      </form>
+
+      <!-- Confirmation notice -->
+      <div id="notice" hidden>
+        <h1>Check your email</h1>
+        <p class="sub" id="noticeText"></p>
+        <button class="btn btn-ghost" style="width:100%" id="backLogin">Back to log in</button>
+      </div>
+
+      <p class="demo-note" id="modeNote"></p>
     </div>
   </main>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/config.js"></script>
 <script src="assets/js/common.js"></script>
+<script src="assets/js/auth.js"></script>
 <script src="assets/js/data.js"></script>
 <script>
-(function () {
-  if (IP.session()) { location.href = "portal.html"; return; }
+(async function () {
   const $ = (id) => document.getElementById(id);
+  const A = IP.auth, params = new URLSearchParams(location.search);
+  const recovering = params.get("mode") === "reset" || location.hash.includes("type=recovery");
+
+  if (!recovering && (await A.current())) { location.href = "portal.html"; return; }
 
   IP.barScene($("authScene"), {
     values: [[3, 4, 5, 6, 7, 9], [2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 4, 5]],
-    colors: [0xffffff, 0x93b4f5, 0x4f7fe0],
-    floor: 0x1e4282, radius: 19, height: 4,
+    colors: [0xf26b35, 0xffa36e, 0x5551d3],
+    floor: 0x1c232b, radius: 19, height: 4,
   });
 
-  function mode(m) {
-    const reg = m === "register";
-    $("loginForm").hidden = reg; $("regForm").hidden = !reg;
-    $("tabLogin").classList.toggle("active", !reg); $("tabReg").classList.toggle("active", reg);
-    document.title = (reg ? "Register" : "Log in") + " · InboundPlus";
+  $("modeNote").innerHTML = A.enabled
+    ? "Secure sign-in powered by Supabase."
+    : "<b>Demo mode:</b> Supabase is not configured yet. Accounts are stored only in this browser.";
+  if (!(window.IP_CONFIG || {}).ALLOW_DEMO) $("demoWrap").hidden = true;
+
+  const forms = ["loginForm", "regForm", "resetForm", "notice"];
+  function show(id) {
+    forms.forEach((f) => ($(f).hidden = f !== id));
+    $("tabs").hidden = id === "resetForm" || id === "notice";
+    $("tabLogin").classList.toggle("active", id === "loginForm");
+    $("tabReg").classList.toggle("active", id === "regForm");
+    document.title = ({ regForm: "Register", resetForm: "New password", notice: "Check your email" }[id] || "Log in") + " · InboundPlus";
   }
-  $("tabLogin").onclick = () => mode("login");
-  $("tabReg").onclick = () => mode("register");
-  if (new URLSearchParams(location.search).get("mode") === "register") mode("register");
+  $("tabLogin").onclick = () => show("loginForm");
+  $("tabReg").onclick = () => show("regForm");
+  $("backLogin").onclick = () => show("loginForm");
+  if (params.get("mode") === "register") show("regForm");
+  if (recovering && A.enabled) show("resetForm");
 
   const validEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-  const go = (session) => { IP.store.set("session", session); location.href = "portal.html"; };
-  const initials = (n) => n.split(/\s+/).filter(Boolean).slice(0, 2).map((p) => p[0].toUpperCase()).join("") || "U";
+  const busy = (btn, on, label) => { btn.disabled = on; btn.textContent = on ? "Please wait…" : label; };
+  const notice = (text) => { $("noticeText").textContent = text; show("notice"); };
 
-  $("loginForm").onsubmit = (e) => {
+  $("loginForm").onsubmit = async (e) => {
     e.preventDefault();
-    const email = $("lEmail").value.trim();
+    const email = $("lEmail").value.trim(), pass = $("lPass").value;
+    $("lErr").textContent = "";
     if (!validEmail(email)) return ($("lErr").textContent = "Enter a valid email address.");
-    if ($("lPass").value.length < 6) return ($("lErr").textContent = "Password must be at least 6 characters.");
-    const users = IP.store.get("users", {});
-    const u = users[email.toLowerCase()];
-    const name = u ? u.name : email.split("@")[0].replace(/[._]/g, " ");
-    go({ email, name, initials: initials(name), company: u ? u.company : IPDATA.client.company, platform: u ? u.platform : "Shopify" });
+    if (pass.length < 6) return ($("lErr").textContent = "Password must be at least 6 characters.");
+    busy($("lBtn"), true, "Log in");
+    try { await A.signIn(email, pass); location.href = "portal.html"; }
+    catch (err) { $("lErr").textContent = err.message || "Could not log in."; busy($("lBtn"), false, "Log in"); }
   };
 
-  $("demoBtn").onclick = () => go({ email: "demo@andesoutdoor.example", name: "Carla Mendoza", initials: "CM", company: IPDATA.client.company, platform: "Shopify", demo: true });
+  $("demoBtn").onclick = () => { A.demo(IPDATA.client.company); location.href = "portal.html"; };
 
-  $("forgot").onclick = (e) => { e.preventDefault(); IP.toast("Demo: a reset link would be emailed to you."); };
-
-  $("regForm").onsubmit = (e) => {
+  $("forgot").onclick = async (e) => {
     e.preventDefault();
-    const name = $("rName").value.trim(), company = $("rCompany").value.trim(), email = $("rEmail").value.trim();
+    const email = $("lEmail").value.trim();
+    if (!validEmail(email)) { $("lErr").textContent = "Enter your email above, then click “Forgot password?”."; return; }
+    if (!A.enabled) return IP.toast("Demo mode: password reset needs Supabase configured.");
+    try { await A.resetPassword(email); notice(`If an account exists for ${email}, we've sent a link to reset your password.`); }
+    catch (err) { $("lErr").textContent = err.message; }
+  };
+
+  $("regForm").onsubmit = async (e) => {
+    e.preventDefault();
+    const name = $("rName").value.trim(), company = $("rCompany").value.trim(), email = $("rEmail").value.trim(), password = $("rPass").value;
     let err = "";
     if (!name || !company) err = "Please enter your name and company.";
     else if (!validEmail(email)) err = "Enter a valid email address.";
-    else if ($("rPass").value.length < 8) err = "Password must be at least 8 characters.";
-    else if (!$("rTerms").checked) err = "Please accept the terms to continue.";
+    else if (password.length < 8) err = "Password must be at least 8 characters.";
+    else if (!$("rTerms").checked) err = "Please accept the privacy & data policy to continue.";
     $("rErr").textContent = err;
     if (err) return;
-    const users = IP.store.get("users", {});
-    users[email.toLowerCase()] = { name, company, platform: $("rPlatform").value, goal: $("rGoal").value, site: $("rSite").value.trim() };
-    IP.store.set("users", users);
-    go({ email, name, initials: initials(name), company, platform: $("rPlatform").value, isNew: true });
+    busy($("rBtn"), true, "Create account");
+    try {
+      const res = await A.signUp({ email, password, name, company, platform: $("rPlatform").value, goal: $("rGoal").value, site: $("rSite").value.trim() });
+      if (res.confirm) { busy($("rBtn"), false, "Create account"); notice(`We sent a confirmation link to ${email}. Click it to activate your account, then log in.`); }
+      else location.href = "portal.html";
+    } catch (ex) { $("rErr").textContent = ex.message || "Could not create the account."; busy($("rBtn"), false, "Create account"); }
+  };
+
+  $("resetForm").onsubmit = async (e) => {
+    e.preventDefault();
+    const p = $("nPass").value;
+    if (p.length < 8) return ($("nErr").textContent = "Password must be at least 8 characters.");
+    try { await A.updatePassword(p); IP.toast("Password updated"); location.href = "portal.html"; }
+    catch (ex) { $("nErr").textContent = ex.message; }
   };
 })();
 </script>

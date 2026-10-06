@@ -1,6 +1,6 @@
 /* Public content (plans, methodology, testimonials, blog, contact) is taken from inboundplus.agency.
    Portal dashboard data (client "Andes Outdoor Co.", metrics, people) is fictional SAMPLE data. */
-window.IPDATA = (function () {
+const DATA = (function () {
   const months = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
 
   // Seeded random so charts look the same every load
@@ -84,12 +84,12 @@ window.IPDATA = (function () {
 
   // Real testimonials (inboundplus.agency/testimonios), original Spanish quotes
   const stories = [
-    { brand: "Olympikus", logo: "assets/img/clients/olympikus.png", result: "+100% sales", person: "Denisse Mora, Jefa de Marketing", text: "“Sentimos que el incremento ha sido abismal, eso está totalmente medido. Hemos crecido más del 100% en nuestras ventas.”" },
-    { brand: "Pekokis", logo: "assets/img/clients/pekokis.png", result: "+40% e-commerce sales", person: "Mirella Véliz, Manager", text: "“Una de nuestras mejores campañas digitales: +30% en ventas totales y +40% en ventas del ecommerce frente al año anterior.”" },
-    { brand: "Ibero Librerías", logo: "assets/img/clients/ibero.png", result: "Goal-driven growth", person: "Marco Gavino, Ecommerce Manager", text: "“Diego siempre se mide con base en objetivos, estrategias y resultados, ayudando a aumentar más las ventas en el canal online.”" },
-    { brand: "Azaleia Perú", logo: "assets/img/clients/azaleia.png", result: "Close to sales targets", person: "Lenin Bayona, Ecommerce Manager", text: "“Gracias a los lineamientos asertivos que nos ha dado la agencia, estamos a punto de llegar a los objetivos de venta.”" },
-    { brand: "SOKSO Moda", logo: "assets/img/clients/sokso.png", result: "Better customer service", person: "Fernando Ventura, Gerente general", text: "“InboundPlus nos ayudó muchísimo para poder resolver los temas de atención al cliente, definir estrategias digitales y encontrar clientes ideales.”" },
-    { brand: "MedicGo", logo: "assets/img/clients/medicgo.png", result: "Needed a new call center", person: "Carlos Casado, Gerente general", text: "“Los resultados luego de contratar la campaña fue que aumentaron el número de llamadas. A tal punto que tuvimos que generar un call center…”" },
+    { brand: "Olympikus", logo: "/img/clients/olympikus.png", result: "+100% sales", person: "Denisse Mora, Jefa de Marketing", text: "“Sentimos que el incremento ha sido abismal, eso está totalmente medido. Hemos crecido más del 100% en nuestras ventas.”" },
+    { brand: "Pekokis", logo: "/img/clients/pekokis.png", result: "+40% e-commerce sales", person: "Mirella Véliz, Manager", text: "“Una de nuestras mejores campañas digitales: +30% en ventas totales y +40% en ventas del ecommerce frente al año anterior.”" },
+    { brand: "Ibero Librerías", logo: "/img/clients/ibero.png", result: "Goal-driven growth", person: "Marco Gavino, Ecommerce Manager", text: "“Diego siempre se mide con base en objetivos, estrategias y resultados, ayudando a aumentar más las ventas en el canal online.”" },
+    { brand: "Azaleia Perú", logo: "/img/clients/azaleia.png", result: "Close to sales targets", person: "Lenin Bayona, Ecommerce Manager", text: "“Gracias a los lineamientos asertivos que nos ha dado la agencia, estamos a punto de llegar a los objetivos de venta.”" },
+    { brand: "SOKSO Moda", logo: "/img/clients/sokso.png", result: "Better customer service", person: "Fernando Ventura, Gerente general", text: "“InboundPlus nos ayudó muchísimo para poder resolver los temas de atención al cliente, definir estrategias digitales y encontrar clientes ideales.”" },
+    { brand: "MedicGo", logo: "/img/clients/medicgo.png", result: "Needed a new call center", person: "Carlos Casado, Gerente general", text: "“Los resultados luego de contratar la campaña fue que aumentaron el número de llamadas. A tal punto que tuvimos que generar un call center…”" },
   ];
 
   const clientLogos = [
@@ -275,3 +275,4 @@ window.IPDATA = (function () {
     ],
   };
 })();
+export default DATA;

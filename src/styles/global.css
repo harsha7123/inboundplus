@@ -483,3 +483,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
 .island .i-dot { width: 8px; height: 8px; border-radius: 50%; background: #30d158; flex-shrink: 0; }
 @media (prefers-reduced-motion: reduce) { .island { transition: opacity .2s; } }
 .island.progress .i-text, .island.progress .i-ico { margin-top: -6px; }
+
+/* React port tweaks */
+a.nav-item { text-decoration: none; }
+.content.fade-in { animation: fade .35s ease-out; }

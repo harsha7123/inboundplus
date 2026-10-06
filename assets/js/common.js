@@ -12,16 +12,39 @@
   };
   IP.session = () => IP.store.get("session", null);
 
-  /* ---------- Toast ---------- */
-  IP.toast = function (text) {
-    let wrap = document.querySelector(".toast-wrap");
-    if (!wrap) { wrap = document.createElement("div"); wrap.className = "toast-wrap"; document.body.appendChild(wrap); }
-    const t = document.createElement("div");
-    t.className = "toast"; t.textContent = text;
-    wrap.appendChild(t);
-    setTimeout(() => { t.style.opacity = "0"; t.style.transition = "opacity .3s"; }, 2600);
-    setTimeout(() => t.remove(), 3000);
+  /* ---------- Dynamic Island notifications ----------
+     IP.island(text, { icon, progress, persist }) → { update(text, pct), done(text) } */
+  let islandEl, islandTimer;
+  IP.island = function (text, opts) {
+    opts = opts || {};
+    if (!islandEl) {
+      islandEl = document.createElement("div");
+      islandEl.className = "island"; islandEl.setAttribute("role", "status"); islandEl.setAttribute("aria-live", "polite");
+      islandEl.innerHTML = '<span class="i-ico"></span><span class="i-text"></span><span class="i-dot"></span><span class="i-bar"><div></div></span>';
+      document.body.appendChild(islandEl);
+    }
+    const el = islandEl, txt = el.querySelector(".i-text"), bar = el.querySelector(".i-bar div"), dot = el.querySelector(".i-dot");
+    clearTimeout(islandTimer);
+    el.querySelector(".i-ico").innerHTML = IP.icon(opts.icon || "check");
+    txt.textContent = text;
+    el.classList.toggle("progress", !!opts.progress);
+    dot.style.display = opts.progress ? "none" : "";
+    bar.style.width = (opts.pct || 0) + "%";
+    el.classList.add("show");
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add("open")));
+    const close = (ms) => {
+      islandTimer = setTimeout(() => {
+        el.classList.remove("open");
+        islandTimer = setTimeout(() => el.classList.remove("show", "progress"), 450);
+      }, ms);
+    };
+    if (!opts.persist) close(2600);
+    return {
+      update(t, pct) { clearTimeout(islandTimer); if (t) txt.textContent = t; if (pct != null) bar.style.width = pct + "%"; },
+      done(t) { if (t) txt.textContent = t; bar.style.width = "100%"; el.querySelector(".i-ico").innerHTML = IP.icon("check"); setTimeout(() => { el.classList.remove("progress"); dot.style.display = ""; }, 400); close(2200); },
+    };
   };
+  IP.toast = (text) => IP.island(text);
 
   IP.esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   IP.fmt = (n) => n >= 1e6 ? (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? (n / 1e3).toFixed(1) + "k" : String(Math.round(n));

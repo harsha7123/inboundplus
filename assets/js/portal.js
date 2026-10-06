@@ -19,7 +19,9 @@
   let charts = [], scenes = [];
   function clearViz() { charts.forEach((c) => c.destroy()); charts = []; scenes.forEach((s) => s && s.destroy()); scenes = []; }
   if (window.Chart) {
-    Chart.defaults.font.family = "Rubik, system-ui, sans-serif";
+    Chart.defaults.font.family = '-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif';
+    Chart.defaults.font.weight = 400;
+    Chart.defaults.plugins.title.font = { weight: 500, size: 13 };
     Chart.defaults.color = "#64748b";
     Chart.defaults.plugins.legend.labels.boxWidth = 10;
     Chart.defaults.plugins.tooltip.backgroundColor = C.navy;
@@ -218,7 +220,7 @@
 
     const cm = D.months.slice(-6);
     $("#cohort").innerHTML = `<thead><tr><th class="nosort">Cohort</th>${["M0", "M1", "M2", "M3", "M4", "M5"].map((m) => `<th class="nosort num">${m}</th>`).join("")}</tr></thead><tbody>` +
-      A.cohorts.map((row, i) => `<tr><td><b>${cm[i]}</b></td>${[0, 1, 2, 3, 4, 5].map((j) => row[j] == null ? "<td></td>" : `<td class="num" style="background:rgba(85,81,211,${(row[j] / 100) * .85 + .05});color:${row[j] > 50 ? "#fff" : C.navy};font-weight:600" title="${cm[i]} cohort, month ${j}: ${row[j]}%">${row[j]}%</td>`).join("")}</tr>`).join("") + "</tbody>";
+      A.cohorts.map((row, i) => `<tr><td><b>${cm[i]}</b></td>${[0, 1, 2, 3, 4, 5].map((j) => row[j] == null ? "<td></td>" : `<td class="num" style="background:rgba(85,81,211,${(row[j] / 100) * .85 + .05});color:${row[j] > 50 ? "#fff" : C.navy};font-weight:500" title="${cm[i]} cohort, month ${j}: ${row[j]}%">${row[j]}%</td>`).join("")}</tr>`).join("") + "</tbody>";
   };
 
   /* ===================== E-COMMERCE ===================== */
@@ -233,10 +235,10 @@
     <div class="panel"><div class="panel-head"><div><h3>CRO experiments</h3><p>A/B tests run by the InboundPlus CRO team</p></div></div>
       <div class="tbl-wrap"><table class="tbl"><thead><tr><th class="nosort">Experiment</th><th class="nosort">Page</th><th class="nosort num">Variant lift</th><th class="nosort">Confidence</th><th class="nosort">Status</th></tr></thead><tbody>
       ${[["One-page checkout", "Checkout", 9.4, 96, "Winner"], ["Free-shipping progress bar", "Cart", 5.1, 88, "Running"], ["Reviews above the fold", "Product", 3.7, 91, "Running"], ["Bundle offer: Trail kit", "Product", -1.2, 54, "Stopped"]]
-        .map(([e, p, l, c, s]) => `<tr><td><b>${e}</b></td><td>${p}</td><td class="num" style="color:${l >= 0 ? C.green : C.red};font-weight:700">${l >= 0 ? "+" : ""}${l}%</td><td><div class="flex"><div class="progress ${c > 90 ? "green" : "amber"}" style="width:110px"><div style="width:${c}%"></div></div><small>${c}%</small></div></td><td>${statusBadge(s === "Winner" ? "Approved" : s === "Running" ? "Learning" : "Paused").replace(/Approved|Learning|Paused/, s)}</td></tr>`).join("")}
+        .map(([e, p, l, c, s]) => `<tr><td><b>${e}</b></td><td>${p}</td><td class="num" style="color:${l >= 0 ? C.green : C.red};font-weight:500">${l >= 0 ? "+" : ""}${l}%</td><td><div class="flex"><div class="progress ${c > 90 ? "green" : "amber"}" style="width:110px"><div style="width:${c}%"></div></div><small>${c}%</small></div></td><td>${statusBadge(s === "Winner" ? "Approved" : s === "Running" ? "Learning" : "Paused").replace(/Approved|Learning|Paused/, s)}</td></tr>`).join("")}
       </tbody></table></div></div>`;
     sortableTable($("#prodTbl"), ["Product", "Units", "Revenue", "Trend"], A.topProducts.map((p) => [p.name, p.units, p.revenue, p.trend]),
-      [(x) => `<b>${esc(x)}</b>`, (x) => x.toLocaleString(), (x) => IP.money(x), (x) => `<span style="color:${x >= 0 ? C.green : C.red};font-weight:700">${x >= 0 ? "▲" : "▼"} ${Math.abs(x)}%</span>`]);
+      [(x) => `<b>${esc(x)}</b>`, (x) => x.toLocaleString(), (x) => IP.money(x), (x) => `<span style="color:${x >= 0 ? C.green : C.red};font-weight:500">${x >= 0 ? "▲" : "▼"} ${Math.abs(x)}%</span>`]);
     const pv = A.topProducts.map((p) => [0.7, 0.85, 0.92, 1].map((f) => Math.round((p.revenue / 1000) * f)));
     scenes.push(IP.barScene($("#prod3d"), { values: pv, colors: [0xf26b35, 0x5551d3, 0x008fff, 0x0c1115, 0xfdc9ad], tooltip: (r, c, val) => `${A.topProducts[r].name} · ${D.months.slice(-4)[c]}<br><b>$${val}k</b>`, radius: 14 }));
   };
@@ -274,7 +276,7 @@
       const rows = S.keywords.filter((k) => k.kw.includes(q.toLowerCase())).map((k) => [k.kw, k.pos, k.prev - k.pos, k.vol, k.url]);
       if (!rows.length) { $("#kwTbl").innerHTML = `<tbody><tr><td class="empty">No keywords match “${esc(q)}”.</td></tr></tbody>`; return; }
       sortableTable($("#kwTbl"), ["Keyword", "Position", "Change", "Search volume", "URL"], rows,
-        [(x) => `<b>${esc(x)}</b>`, (x) => `<span class="badge ${x <= 3 ? "green" : x <= 10 ? "blue" : "gray"}">#${x}</span>`, (x) => x === 0 ? "—" : `<span style="color:${x > 0 ? C.green : C.red};font-weight:700">${x > 0 ? "▲" : "▼"} ${Math.abs(x)}</span>`, (x) => x.toLocaleString(), (x) => `<small class="muted">${esc(x)}</small>`]);
+        [(x) => `<b>${esc(x)}</b>`, (x) => `<span class="badge ${x <= 3 ? "green" : x <= 10 ? "blue" : "gray"}">#${x}</span>`, (x) => x === 0 ? "—" : `<span style="color:${x > 0 ? C.green : C.red};font-weight:500">${x > 0 ? "▲" : "▼"} ${Math.abs(x)}</span>`, (x) => x.toLocaleString(), (x) => `<small class="muted">${esc(x)}</small>`]);
     }
     drawKw("");
     $("#kwFilter").oninput = (e) => drawKw(e.target.value.trim());
@@ -367,7 +369,7 @@
   /* ===================== DEPLOYMENTS ===================== */
   VIEWS.deployments = (v) => {
     v.innerHTML = head("Software & deployments", "Live status of your store, AI agents and integrations.", `<button class="btn btn-primary" id="deployBtn">${icon("rocket")} Request deployment</button>`) +
-    `<div class="grid g-2" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">${D.apps.map((a) => `<div class="kpi tilt"><div class="k-top"><span>${a.env}</span>${statusBadge(a.health)}</div><div style="font-weight:700;font-size:16px;margin:10px 0 4px">${esc(a.name)}</div><small class="muted">${a.version} · ${a.uptime}% uptime (30d)</small><div class="flex" style="gap:2px;margin-top:10px">${Array.from({ length: 30 }, (_, i) => `<span title="Day ${i + 1}" style="flex:1;height:22px;border-radius:2px;background:${a.uptime < 100 && (i === 11 || (a.uptime < 99.95 && i === 23)) ? C.amber : C.green}"></span>`).join("")}</div></div>`).join("")}</div>
+    `<div class="grid g-2" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">${D.apps.map((a) => `<div class="kpi tilt"><div class="k-top"><span>${a.env}</span>${statusBadge(a.health)}</div><div style="font-weight:500;font-size:16px;margin:10px 0 4px">${esc(a.name)}</div><small class="muted">${a.version} · ${a.uptime}% uptime (30d)</small><div class="flex" style="gap:2px;margin-top:10px">${Array.from({ length: 30 }, (_, i) => `<span title="Day ${i + 1}" style="flex:1;height:22px;border-radius:2px;background:${a.uptime < 100 && (i === 11 || (a.uptime < 99.95 && i === 23)) ? C.amber : C.green}"></span>`).join("")}</div></div>`).join("")}</div>
     <div class="grid g-21">
       <div class="panel"><div class="panel-head"><div><h3>Deployment history</h3><p>Every release, with status and notes</p></div><div class="seg" id="envF"><button class="active" data-e="All">All</button><button data-e="Production">Production</button><button data-e="Staging">Staging</button></div></div><div class="timeline" id="tl"></div></div>
       <div class="panel"><div class="panel-head"><h3>Pipeline</h3></div><div id="pipe"><p class="muted" style="font-size:14px">No deployment running. Click <b>Request deployment</b> to watch a release go through build → test → deploy.</p></div>
@@ -395,16 +397,18 @@
     const steps = ["Build", "Unit tests", "Security scan", "Deploy to " + env, "Health check"];
     const ver = "v" + (2 + Math.floor(Math.random() * 2)) + "." + Math.floor(Math.random() * 9) + "." + Math.floor(Math.random() * 9);
     $("#pipe").innerHTML = `<b>${esc(app)} ${ver}</b><small class="muted" style="display:block;margin-bottom:12px">→ ${env}</small>` + steps.map((s, i) => `<div class="list-item" id="st${i}"><span class="badge gray" style="width:72px;justify-content:center">Queued</span><span class="grow" style="font-size:14px">${s}</span></div>`).join("") + `<div class="progress" style="margin-top:12px"><div id="pipeBar" style="width:0"></div></div>`;
+    const isl = IP.island(`Deploying ${app} ${ver}…`, { icon: "rocket", progress: true, persist: true });
     let i = 0;
     const tick = () => {
       if (i > 0) $(`#st${i - 1} .badge`).outerHTML = `<span class="badge green" style="width:72px;justify-content:center">Passed</span>`;
       if (i === steps.length) {
         state.deployments.unshift({ id: "d-" + (1044 + state.deployments.length - 5), app, env, version: ver, status: "success", by: session.name + " (request)", when: "Just now", notes });
-        save(); done(); IP.toast(`${app} ${ver} deployed to ${env} ✓`); return;
+        save(); done(); isl.done(`${app} ${ver} is live on ${env}`); return;
       }
       const st = $(`#st${i} .badge`); if (!st) return;
       st.outerHTML = `<span class="badge amber" style="width:72px;justify-content:center">Running</span>`;
       $("#pipeBar").style.width = ((i + 1) / steps.length) * 100 + "%";
+      isl.update(`${steps[i]} · ${app}`, ((i + 1) / steps.length) * 100);
       i++; setTimeout(tick, 900);
     };
     tick();
@@ -503,7 +507,7 @@
     $("#buildRep").onclick = () => modal(`<h2>Build a custom report</h2><p class="muted">Pick the sections and period. We'll generate it instantly.</p><br>
       <label class="field"><span>Report name</span><input class="input" id="crN" value="Custom report – ${new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}"></label>
       <label class="field"><span>Period</span><select class="input" id="crP"><option>Last 30 days</option><option>Last quarter</option><option>Year to date</option></select></label>
-      <div class="field"><span style="font-weight:600;font-size:13px;display:block;margin-bottom:8px">Sections</span>${["Sales & revenue", "Traffic & conversion", "SEO", "Paid ads", "AI agents", "Deployments"].map((s, i) => `<label class="opt"><input type="checkbox" ${i < 4 ? "checked" : ""} value="${s}"> ${s}</label>`).join("")}</div>
+      <div class="field"><span style="font-weight:500;font-size:13px;display:block;margin-bottom:8px">Sections</span>${["Sales & revenue", "Traffic & conversion", "SEO", "Paid ads", "AI agents", "Deployments"].map((s, i) => `<label class="opt"><input type="checkbox" ${i < 4 ? "checked" : ""} value="${s}"> ${s}</label>`).join("")}</div>
       <div class="modal-foot"><button class="btn btn-ghost" data-close>Cancel</button><button class="btn btn-primary" id="crGo">Generate report</button></div>`, (m) => {
       $("#crGo", m).onclick = () => {
         const secs = $$("input[type=checkbox]:checked", m).map((x) => x.value);
@@ -533,7 +537,7 @@
   function printReport(r) {
     const w = window.open("", "_blank");
     if (!w) return IP.toast("Allow pop-ups to save the PDF.");
-    w.document.write(`<!doctype html><html><head><title>${esc(r.name)}</title><style>body{font-family:Rubik,Arial,sans-serif;color:#0c1115;max-width:720px;margin:40px auto;padding:0 20px}h1{color:#f26b35}.top{display:flex;justify-content:space-between;border-bottom:3px solid #f26b35;padding-bottom:12px;margin-bottom:20px}</style></head><body><div class="top"><img src="${location.href.replace(/[^/]*$/, "")}assets/img/logo.png" style="height:28px" alt="InboundPlus"><span>${esc(session.company)}</span></div><h1>${esc(r.name)}</h1><p>${r.type} report · ${r.date}</p>${reportBody(r)}<p style="margin-top:40px;color:#64748b;font-size:12px">Prototype report with sample data.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
+    w.document.write(`<!doctype html><html><head><title>${esc(r.name)}</title><style>body{font-family:-apple-system,BlinkMacSystemFont,Inter,Segoe UI,sans-serif;color:#0c1115;max-width:720px;margin:40px auto;padding:0 20px}h1{color:#f26b35}.top{display:flex;justify-content:space-between;border-bottom:3px solid #f26b35;padding-bottom:12px;margin-bottom:20px}</style></head><body><div class="top"><img src="${location.href.replace(/[^/]*$/, "")}assets/img/logo.png" style="height:28px" alt="InboundPlus"><span>${esc(session.company)}</span></div><h1>${esc(r.name)}</h1><p>${r.type} report · ${r.date}</p>${reportBody(r)}<p style="margin-top:40px;color:#64748b;font-size:12px">Prototype report with sample data.</p><script>window.onload=()=>window.print()<\/script></body></html>`);
     w.document.close();
   }
 
@@ -551,7 +555,7 @@
           <div class="form-error" id="svErr"></div>
           <button class="btn btn-primary" ${R.submitted ? "disabled" : ""}>${R.submitted ? "Thanks — response recorded" : "Submit response"}</button>
         </form></div>
-      <div class="panel"><div class="panel-head"><div><h3>Live results</h3><p id="svResp">${R.responses} responses</p></div><div style="text-align:right"><small class="muted">NPS</small><div style="font-size:30px;font-weight:800;color:${C.navy}" id="npsVal">${R.nps}</div></div></div>
+      <div class="panel"><div class="panel-head"><div><h3>Live results</h3><p id="svResp">${R.responses} responses</p></div><div style="text-align:right"><small class="muted">NPS</small><div style="font-size:30px;font-weight:600;color:${C.navy}" id="npsVal">${R.nps}</div></div></div>
         <div class="chart-box sm"><canvas id="chSat"></canvas></div><div class="chart-box sm" style="margin-top:16px"><canvas id="chPrio"></canvas></div></div>
     </div>`;
     let nps = null, sat = null;
@@ -640,8 +644,8 @@
     v.innerHTML = head("Billing", "Your plan, retainer hours and invoices.", "") +
     `<div class="grid g-3">
       <div class="panel tilt"><small class="muted">Current plan</small><h3 style="margin:6px 0;font-size:20px;color:${C.navy}">${D.client.plan}</h3><p class="muted" style="font-size:14px">${D.client.planTerm} · billed monthly (sample)</p><button class="btn btn-sm btn-ghost" style="margin-top:14px" id="chgPlan">Compare plans</button></div>
-      <div class="panel tilt"><small class="muted">Retainer hours (October)</small><div style="font-size:28px;font-weight:800;color:${C.navy};margin:6px 0">${r.used} / ${r.hours} h</div><div class="progress"><div style="width:${(r.used / r.hours) * 100}%"></div></div><small class="muted">${r.hours - r.used} hours remaining · resets Nov 1</small></div>
-      <div class="panel tilt"><small class="muted">Balance due</small><div style="font-size:28px;font-weight:800;color:${C.amber};margin:6px 0">${IP.money(sum(D.invoices.filter((i) => i.status === "Due").map((i) => i.amount)))}</div><small class="muted">Due Oct 15, 2026 · Bank transfer or card</small></div>
+      <div class="panel tilt"><small class="muted">Retainer hours (October)</small><div style="font-size:28px;font-weight:600;color:${C.navy};margin:6px 0">${r.used} / ${r.hours} h</div><div class="progress"><div style="width:${(r.used / r.hours) * 100}%"></div></div><small class="muted">${r.hours - r.used} hours remaining · resets Nov 1</small></div>
+      <div class="panel tilt"><small class="muted">Balance due</small><div style="font-size:28px;font-weight:600;color:${C.amber};margin:6px 0">${IP.money(sum(D.invoices.filter((i) => i.status === "Due").map((i) => i.amount)))}</div><small class="muted">Due Oct 15, 2026 · Bank transfer or card</small></div>
     </div>
     <div class="panel"><div class="panel-head"><h3>Invoices</h3></div><div class="tbl-wrap"><table class="tbl"><thead><tr><th class="nosort">Invoice</th><th class="nosort">Date</th><th class="nosort">Description</th><th class="nosort num">Amount</th><th class="nosort">Status</th><th class="nosort"></th></tr></thead><tbody>
       ${D.invoices.map((i) => `<tr><td><b>${i.id}</b></td><td>${i.date}</td><td>${esc(i.desc)}</td><td class="num">${IP.money(i.amount)}</td><td>${statusBadge(i.status)}</td><td><button class="btn btn-sm btn-ghost" data-inv="${i.id}">View</button></td></tr>`).join("")}

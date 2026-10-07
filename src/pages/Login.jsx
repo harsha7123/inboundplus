@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { BarScene } from "../components/ui";
-import { useAuth } from "../context/AuthContext";
+import { homeFor, useAuth } from "../context/AuthContext";
 import { useIsland } from "../context/IslandContext";
-import D from "../data";
 import { ALLOW_DEMO } from "../lib/supabase";
 import { validEmail } from "../lib/utils";
 
@@ -29,7 +28,7 @@ export default function Login() {
     setErr("");
   }, [view]);
 
-  if (!auth.loading && auth.session && view !== "reset") return <Navigate to="/portal" replace />;
+  if (!auth.loading && auth.session && view !== "reset") return <Navigate to={homeFor(auth.session)} replace />;
 
   const run = async (fn) => { setBusy(true); setErr(""); try { await fn(); } catch (e) { setErr(e.message || "Something went wrong."); } finally { setBusy(false); } };
 
@@ -37,7 +36,7 @@ export default function Login() {
     e.preventDefault();
     if (!validEmail(f.email)) return setErr("Enter a valid email address.");
     if (f.password.length < 6) return setErr("Password must be at least 6 characters.");
-    run(async () => { await auth.signIn(f.email.trim(), f.password); nav("/portal"); });
+    run(async () => { const s = await auth.signIn(f.email.trim(), f.password); nav(homeFor(s)); });
   };
 
   const register = (e) => {
@@ -66,7 +65,7 @@ export default function Login() {
     run(async () => { await auth.updatePassword(f.password); island.notify("Password updated"); nav("/portal"); });
   };
 
-  const demo = () => { auth.demo(D.client.company); nav("/portal"); };
+  const demo = (kind) => nav(homeFor(auth.demo(kind)));
 
   return (
     <div className="auth-page">
@@ -98,7 +97,8 @@ export default function Login() {
               <div className="form-error" role="alert">{err}</div>
               <button className="btn btn-primary" style={{ width: "100%" }} disabled={busy}>{busy ? "Please wait…" : "Log in"}</button>
               {ALLOW_DEMO && <><div className="divider">or</div>
-                <button className="btn btn-ghost" style={{ width: "100%" }} type="button" onClick={demo}>Explore the demo client account</button></>}
+                <div className="row-2"><button className="btn btn-ghost" type="button" onClick={() => demo("client")}>Client demo</button>
+                <button className="btn btn-ghost" type="button" onClick={() => demo("admin")}>Admin demo</button></div></>}
             </form>
           )}
 

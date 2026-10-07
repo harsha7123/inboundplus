@@ -21,7 +21,8 @@ export function Tilt({ as: Tag = "div", className = "", children, ...rest }) {
 
 const BADGE = { "On track": "green", "At risk": "amber", Active: "green", Learning: "amber", Paused: "gray", Paid: "green", Due: "amber", Approved: "green",
   "Needs approval": "amber", Rejected: "red", Shared: "gray", Healthy: "green", Testing: "amber", success: "green", failed: "red", running: "amber",
-  Winner: "green", Running: "amber", Stopped: "gray", Submitted: "green", Open: "amber", "In review": "amber" };
+  Winner: "green", Running: "amber", Stopped: "gray", Submitted: "green", Open: "amber", "In review": "amber",
+  New: "blue", "In progress": "amber", Done: "green", Onboarding: "amber", admin: "blue", client: "gray" };
 export const StatusBadge = ({ s, label }) => <span className={`badge ${BADGE[s] || "gray"}`}><span className="dot" />{label || s}</span>;
 
 export function PageHead({ title, sub, children }) {

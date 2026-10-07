@@ -487,3 +487,15 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
 /* React port tweaks */
 a.nav-item { text-decoration: none; }
 .content.fade-in { animation: fade .35s ease-out; }
+
+/* ---------- Admin portal ---------- */
+.admin-pill { font-size: 11px; font-weight: 500; color: #fff; background: var(--purple); padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+.portal.admin .nav-item.active { background: var(--purple-soft); color: var(--purple); }
+.portal.admin .nav-item.active svg { color: var(--purple); }
+.tabs-bar { display: flex; gap: 4px; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+.tabs-bar button { display: inline-flex; align-items: center; gap: 7px; border: none; background: none; padding: 8px 14px; border-radius: 9px; font-size: 14px; color: var(--muted); cursor: pointer; }
+.tabs-bar button:hover { background: var(--surface-2); color: var(--text); }
+.tabs-bar button.active { background: var(--navy); color: #fff; }
+.tabs-bar .count { font-size: 11px; background: var(--red); color: #fff; border-radius: 999px; padding: 0 6px; }
+.file-ico.img { background: var(--purple); } .file-ico.doc { background: var(--sky); }
+@media (max-width: 640px) { .top-actions .admin-pill { display: none; } }

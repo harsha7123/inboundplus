@@ -6,6 +6,16 @@ It is a **React 18 + Vite** app with React Router, **Supabase Auth**, Three.js (
 - **Public content** (plans and prices, methodology, testimonials, client logos, blog and ebooks, contact) comes from inboundplus.agency.
 - **Portal dashboards** use fictional sample data (client "Andes Outdoor Co.") and are labelled "Sample data".
 
+## Two portals
+| URL | Who | What |
+|---|---|---|
+| `/portal` | InboundPlus **clients** | Dashboards, files & approvals, reports, projects, deployments, AI agents, messages, billing |
+| `/admin` | InboundPlus **team** (admins) | All clients, upload center (files and reports), requests inbox, messages, deployments, projects, users & access |
+
+Anything an admin publishes (files, reports, projects, releases, messages) appears immediately in that client's portal. Anything a client does (approvals, uploads, requests, messages) appears in the admin portal.
+
+**Demo:** on `/login`, use **Client demo** or **Admin demo**. Both run on sample data stored in your browser, so no setup is needed.
+
 ## Quick start
 ```bash
 npm install
@@ -29,6 +39,11 @@ src/
     ui.jsx                 Tilt, Kpi, Panel, Modal, Segmented, Chips, SortableTable, BarScene (3D)…
     Icon.jsx               stroke icon set
     RequestModal.jsx       shared "new request" dialog
+  pages/admin/              admin portal: registry.js, sections.jsx (reusable managers), one file per page
+  layouts/AdminLayout.jsx   admin sidebar + top bar
+  lib/db.js                 data layer: Supabase adapter + local demo adapter (same API)
+  lib/useData.js            hooks: useTable, useOrgs, useUsers, useDb
+  components/shared.jsx     FileGrid, Uploader, DownloadButton, ChatThread, DeployTimeline
   context/
     AuthContext.jsx        Supabase auth, with local demo fallback
     IslandContext.jsx      Dynamic Island notifications: useIsland().notify(...)
@@ -47,11 +62,23 @@ public/img/                logo, partner badges, client logos
 The route, sidebar item, page title and search entry are all created from that line.
 
 ## Moving from sample data to real data
-- Portal state lives in `context/PortalContext.jsx` and is stored in localStorage. Replace it with Supabase tables (organisations, projects, files, reports), protected by RLS per client.
+- Files, reports, projects, deployments, requests and messages are already real Supabase data (`lib/db.js`).
+- The task board, AI agent toggles, survey and settings toggles still use local state (`context/PortalContext.jsx`). Move them to tables the same way.
 - Dashboard numbers come from `data/index.js`. Replace them with API calls to GA4, Search Console, Shopify, HubSpot and Meta/Google Ads, ideally through Vercel serverless functions.
 - AI agent replies are scripted in `pages/portal/Agents.jsx` (`reply()`). Point it at a serverless function that calls the Claude API.
 
-## Supabase
+## Supabase setup (required for real accounts)
+1. Open Supabase → **SQL Editor**, paste all of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**. This creates the tables, the security rules and the private `client-files` storage bucket. It is safe to run again later.
+2. Register your own account on `/login`, then make yourself an admin by running this in the SQL Editor:
+   ```sql
+   update public.profiles set role = 'admin', org_id = null where email = 'you@company.com';
+   ```
+3. Log out and log back in. You will land on `/admin`.
+4. Clients who register get their own workspace automatically. To add a teammate to an existing client, ask them to register, then pick their client under **Admin → Users & access**.
+
+Security: Row Level Security makes sure clients can only read their own organization's rows and files, while admins can read and write everything. Clients can only upload files, approve files, send requests and send messages for their own organization.
+
+## Supabase settings
 - Env vars are in `.env`: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (the publishable key, which is safe to expose). Set `VITE_ALLOW_DEMO=false` to hide the demo account.
 - Go to **Authentication → URL Configuration**:
   - Site URL: `https://inboundplus.vercel.app`

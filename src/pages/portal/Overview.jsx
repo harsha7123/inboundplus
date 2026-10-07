@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { usePortal } from "../../context/PortalContext";
 import D from "../../data";
 import { axes, gauge, rightAxis } from "../../lib/charts";
+import { ago, useTable } from "../../lib/useData";
 import { C, PALETTE, PALETTE_HEX, fmt, money, pct, sum } from "../../lib/utils";
 
 const A = D.analytics, n = A.revenue.length, m6 = D.months.slice(-6);
@@ -17,6 +18,8 @@ export default function Overview() {
   const { state } = usePortal();
   const nav = useNavigate();
   const [mode, setMode] = useState("all");
+  const projects = useTable("projects", session.orgId || undefined).rows;
+  const deployments = useTable("deployments", session.orgId || undefined).rows;
   const r = D.client.retainer;
   const scene = A.channelMonthly.map((row, i) => (KEEP[mode].includes(i) ? row : row.map(() => 0)));
 
@@ -82,16 +85,16 @@ export default function Overview() {
 
       <div className="grid g-3">
         <Panel title="Active projects" actions={<button className="btn btn-sm btn-ghost" onClick={() => nav("/portal/projects")}>View all</button>}>
-          <div className="list">{D.projects.map((p) => (
+          <div className="list">{projects.length === 0 && <p className="muted" style={{ fontSize: 14 }}>No projects yet.</p>}{projects.slice(0, 4).map((p) => (
             <div className="list-item" key={p.id}>
-              <div className="grow"><b style={{ fontSize: 14 }}>{p.name}</b><small>{p.type} · due {p.due}</small><div style={{ marginTop: 6 }}><Progress value={p.progress} tone={p.status === "At risk" ? "amber" : ""} /></div></div>
+              <div className="grow"><b style={{ fontSize: 14 }}>{p.name}</b><small>{p.type}{p.due ? ` · due ${p.due}` : ""}</small><div style={{ marginTop: 6 }}><Progress value={p.progress} tone={p.status === "At risk" ? "amber" : ""} /></div></div>
               <b>{p.progress}%</b>
             </div>))}
           </div>
         </Panel>
         <Panel title="Latest deployments" actions={<button className="btn btn-sm btn-ghost" onClick={() => nav("/portal/deployments")}>View all</button>}>
-          <div className="timeline">{state.deployments.slice(0, 4).map((d) => (
-            <div key={d.id} className={`tl-item ${d.status === "success" ? "ok" : d.status === "failed" ? "fail" : "run"}`}><b style={{ fontSize: 14 }}>{d.app} {d.version}</b><br /><small>{d.env} · {d.when}</small></div>))}
+          <div className="timeline">{deployments.length === 0 && <p className="muted" style={{ fontSize: 14 }}>No deployments yet.</p>}{deployments.slice(0, 4).map((d) => (
+            <div key={d.id} className={`tl-item ${d.status === "success" ? "ok" : d.status === "failed" ? "fail" : "run"}`}><b style={{ fontSize: 14 }}>{d.app} {d.version}</b><br /><small>{d.env} · {ago(d.created_at)}</small></div>))}
           </div>
         </Panel>
         <Panel title="AI agents this week" actions={<button className="btn btn-sm btn-ghost" onClick={() => nav("/portal/agents")}>Open</button>}>

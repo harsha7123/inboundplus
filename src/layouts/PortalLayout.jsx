@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { usePortal } from "../context/PortalContext";
 import D from "../data";
 import { GROUPS, PORTAL_PAGES, to } from "../pages/portal/registry";
+import { useTable } from "../lib/useData";
+import { store } from "../lib/utils";
 
 export default function PortalLayout() {
   const { session, signOut } = useAuth();
@@ -15,9 +17,13 @@ export default function PortalLayout() {
   const [menu, setMenu] = useState(null); // "bell" | "user" | null
   const [q, setQ] = useState("");
 
+  const orgId = session.orgId || undefined;
+  const files = useTable("files", orgId).rows;
+  const messages = useTable("messages", orgId).rows;
+  const seen = store.get(`seen_${orgId}`, "");
   const counts = {
-    unread: state.threads.filter((t) => t.unread).length,
-    approvals: state.files.filter((f) => f.status === "Needs approval").length,
+    unread: messages.filter((m) => m.sender_role === "agency" && m.created_at > seen).length,
+    approvals: files.filter((f) => f.status === "Needs approval").length,
   };
 
   const current = PORTAL_PAGES.find((p) => to(p.path) === loc.pathname.replace(/\/$/, "")) || PORTAL_PAGES[0];
@@ -38,8 +44,7 @@ export default function PortalLayout() {
     ...D.blog.map((b) => ({ t: b.title, kind: b.cat, go: "blog" })),
     ...D.projects.map((p) => ({ t: p.name, kind: "Project", go: "projects" })),
     ...D.seo.keywords.map((k) => ({ t: k.kw, kind: "Keyword", go: "seo" })),
-    ...state.reports.map((r) => ({ t: r.name, kind: "Report", go: "reports" })),
-  ], [state.reports]);
+  ], []);
   const hits = q.trim() ? index.filter((x) => x.t.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 8) : [];
   const goSearch = (h) => { nav(to(h.go)); setQ(""); };
 

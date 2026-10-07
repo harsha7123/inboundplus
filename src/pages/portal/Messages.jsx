@@ -1,51 +1,37 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
+import { ChatThread } from "../../components/shared";
 import { PageHead } from "../../components/ui";
-import { usePortal } from "../../context/PortalContext";
+import { useAuth } from "../../context/AuthContext";
+import { useIsland } from "../../context/IslandContext";
+import D from "../../data";
+import { useDb, useTable } from "../../lib/useData";
+import { store } from "../../lib/utils";
 
 export default function Messages() {
-  const { state, update } = usePortal();
-  const [cur, setCur] = useState(state.threads[0].id);
-  const [text, setText] = useState("");
-  const log = useRef(null);
-  const thread = state.threads.find((t) => t.id === cur);
+  const { session } = useAuth();
+  const db = useDb();
+  const island = useIsland();
+  const orgId = session.orgId || undefined;
+  const { rows } = useTable("messages", orgId);
 
-  const patch = (id, fn) => update("threads", (ts) => ts.map((t) => (t.id === id ? fn(t) : t)));
-  useEffect(() => { if (thread.unread) patch(cur, (t) => ({ ...t, unread: false })); }, [cur]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { if (log.current) log.current.scrollTop = 1e6; }, [thread.msgs.length, cur]);
+  // mark conversation as read
+  useEffect(() => { if (orgId) store.set(`seen_${orgId}`, new Date().toISOString()); }, [orgId, rows.length]);
 
-  const send = (e) => {
-    e.preventDefault();
-    const t = text.trim(); if (!t) return;
-    const id = cur;
-    patch(id, (th) => ({ ...th, msgs: [...th.msgs, { me: true, t, at: "now" }] }));
-    setText("");
-    setTimeout(() => patch(id, (th) => ({ ...th, msgs: [...th.msgs, { me: false, t: "Thanks! I've got it and will get back to you shortly. 👍", at: "now" }] })), 1400);
+  const send = async (body) => {
+    if (!orgId) return island.notify("Your workspace is not set up yet", { icon: "x" });
+    try { await db.insert("messages", { org_id: orgId, sender_role: "client", sender_name: session.name, body }); }
+    catch (e) { island.notify("Message not sent: " + e.message, { icon: "x" }); }
   };
 
   return (
     <>
-      <PageHead title="Messages" sub="Talk to your InboundPlus team." />
-      <div className="panel" style={{ padding: 0 }}>
-        <div className="thread">
-          <div className="thread-list">
-            {state.threads.map((t) => (
-              <div key={t.id} className={`thread-item ${t.id === cur ? "active" : ""}`} onClick={() => setCur(t.id)}>
-                <div className="flex"><div className={`avatar sm ${t.initials === "IP" ? "" : "blue"}`}>{t.initials}</div>
-                  <div className="grow"><b>{t.with} {t.unread && <span className="dot" style={{ color: "var(--red)" }} />}</b><small>{t.role}</small></div></div>
-                <small style={{ display: "block", marginTop: 6, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.msgs[t.msgs.length - 1].t}</small>
-              </div>
-            ))}
-          </div>
-          <div className="thread-main chat" style={{ paddingRight: 18, paddingTop: 16, height: "100%" }}>
-            <div className="chat-log" ref={log}>
-              {thread.msgs.map((m, i) => <div key={i} className={`msg ${m.me ? "me" : "bot"}`}>{m.t}<small>{m.me ? "You" : thread.with} · {m.at}</small></div>)}
-            </div>
-            <form className="chat-input" onSubmit={send} style={{ paddingBottom: 16 }}>
-              <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write a message…" autoComplete="off" />
-              <button className="btn btn-primary">Send</button>
-            </form>
-          </div>
+      <PageHead title="Messages" sub="Talk to your InboundPlus team. Replies appear here." />
+      <div className="panel">
+        <div className="flex" style={{ marginBottom: 12 }}>
+          <div className="avatar sm blue">{D.client.manager.initials}</div>
+          <div><b>InboundPlus team</b><small className="muted" style={{ display: "block" }}>Account management, strategy and delivery</small></div>
         </div>
+        <ChatThread messages={rows} me="client" onSend={send} />
       </div>
     </>
   );

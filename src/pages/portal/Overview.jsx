@@ -20,6 +20,8 @@ export default function Overview() {
   const [mode, setMode] = useState("all");
   const projects = useTable("projects", session.orgId || undefined).rows;
   const deployments = useTable("deployments", session.orgId || undefined).rows;
+  const onboarding = [...useTable("onboarding_tasks", session.orgId || undefined).rows].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+  const obDone = onboarding.filter((t) => t.done).length;
   const r = D.client.retainer;
   const scene = A.channelMonthly.map((row, i) => (KEEP[mode].includes(i) ? row : row.map(() => 0)));
 
@@ -37,6 +39,18 @@ export default function Overview() {
             <button className="btn btn-primary" onClick={() => nav("/portal/settings")}>Connect data sources</button>
           </div>
         </div>
+      )}
+
+      {onboarding.length > 0 && obDone < onboarding.length && (
+        <Panel title="Your onboarding with InboundPlus" sub={`${obDone} of ${onboarding.length} steps complete`} style={{ marginBottom: 20 }}>
+          <Progress value={(obDone / onboarding.length) * 100} />
+          <div className="list" style={{ marginTop: 10 }}>
+            {onboarding.filter((t) => !t.done).slice(0, 4).map((t) => (
+              <div className="list-item" key={t.id}><span className="dot" style={{ color: "var(--amber)" }} /><span className="grow" style={{ fontSize: 14 }}>{t.title}</span><small className="muted">{t.section}</small></div>
+            ))}
+          </div>
+          <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>Need to share access or files? Use Files or Messages and your team will tick it off.</p>
+        </Panel>
       )}
 
       <div className="kpis">

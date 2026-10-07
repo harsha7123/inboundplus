@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import Icon from "../components/Icon";
 import { useAuth } from "../context/AuthContext";
 import { useOrgs, useTable, useDb } from "../lib/useData";
-import { ADMIN_PAGES, adminTo } from "../pages/admin/registry";
+import { ADMIN_GROUPS, ADMIN_PAGES, adminTo } from "../pages/admin/registry";
 import { store } from "../lib/utils";
 
 export default function AdminLayout() {
@@ -21,11 +21,12 @@ export default function AdminLayout() {
   const counts = {
     requests: requests.filter((r) => r.status === "New").length,
     messages: messages.filter((m) => m.sender_role === "client" && m.created_at > seen).length,
+    onboarding: orgs.filter((o) => o.stage && o.stage !== "Live").length,
   };
 
   const current = ADMIN_PAGES.find((p) => adminTo(p.path) === loc.pathname.replace(/\/$/, ""));
   useEffect(() => {
-    document.title = `${current?.label || "Client"} · InboundPlus Admin`;
+    if (current) document.title = `${current.label} · InboundPlus Admin`;
     setSideOpen(false); setMenu(false); window.scrollTo(0, 0);
   }, [loc.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -46,12 +47,16 @@ export default function AdminLayout() {
           <span className="admin-pill">Admin portal</span>
         </Link>
         <nav className="nav" aria-label="Admin menu">
-          <div className="nav-label">Manage</div>
-          {ADMIN_PAGES.map((p) => (
-            <NavLink key={p.path} to={adminTo(p.path)} end={p.path === ""} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
-              <Icon name={p.icon} />{p.label}
-              {p.badge && counts[p.badge] > 0 && <span className="count">{counts[p.badge]}</span>}
-            </NavLink>
+          {ADMIN_GROUPS.map((g) => (
+            <div key={g}>
+              <div className="nav-label">{g}</div>
+              {ADMIN_PAGES.filter((p) => p.group === g).map((p) => (
+                <NavLink key={p.path} to={adminTo(p.path)} end={p.path === ""} className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}>
+                  <Icon name={p.icon} />{p.label}
+                  {p.badge && counts[p.badge] > 0 && <span className={`count ${p.badge === "onboarding" ? "soft" : ""}`}>{counts[p.badge]}</span>}
+                </NavLink>
+              ))}
+            </div>
           ))}
           <div className="nav-label">Clients</div>
           {orgs.slice(0, 8).map((o) => (

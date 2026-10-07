@@ -7,6 +7,10 @@ import { useIsland } from "../../context/IslandContext";
 import { usePortal } from "../../context/PortalContext";
 import D from "../../data";
 import { C, pct } from "../../lib/utils";
+import { agentByKey } from "../../data/agency";
+import { useAuth } from "../../context/AuthContext";
+import { useTable } from "../../lib/useData";
+import { StatusBadge } from "../../components/ui";
 
 /* Scripted demo replies. Replace `reply()` with a call to your agent backend (e.g. Claude API via a serverless function). */
 const A = D.analytics, n = A.revenue.length;
@@ -52,12 +56,26 @@ export default function Agents() {
     island.notify(`${a.name} ${on ? "activated" : "paused"}`, { icon: "bot" });
   };
   const agent = state.agents.find((a) => a.id === cur);
+  const { session } = useAuth();
+  const managed = useTable("agent_deployments", session.orgId || undefined).rows;
 
   return (
     <>
       <PageHead title="AI agents" sub="Claude-powered agents working for your brand — monitor them and test them live.">
         <button className="btn btn-ghost" onClick={() => nav("/portal/software")}><Icon name="plus" size={16} /> Add an agent</button>
       </PageHead>
+      {managed.length > 0 && (
+        <Panel title="Agents InboundPlus runs for you" sub="Set up and managed by your InboundPlus team" style={{ marginBottom: 20 }}>
+          <div className="list">{managed.map((m) => { const cat = agentByKey(m.agent_key); return (
+            <div className="list-item" key={m.id}>
+              <span className="agent-ico"><Icon name={cat?.icon || "bot"} size={16} /></span>
+              <div className="grow"><b style={{ fontSize: 14 }}>{cat?.name || m.agent_key}</b><small>{m.channel}{m.conversations ? ` · ${m.conversations.toLocaleString()} conversations` : ""}</small></div>
+              <StatusBadge s={m.status === "Live" ? "Active" : m.status === "Paused" ? "Paused" : "Learning"} label={m.status} />
+            </div>); })}
+          </div>
+        </Panel>
+      )}
+      <h3 style={{ margin: "4px 0 12px" }}>Test your agents</h3>
       <div className="grid" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(230px,1fr))" }}>
         {state.agents.map((a) => (
           <Tilt key={a.id} className={`panel agent-card ${a.id === cur ? "selected" : ""}`} onClick={() => setCur(a.id)}>

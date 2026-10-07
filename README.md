@@ -10,7 +10,7 @@ It is a **React 18 + Vite** app with React Router, **Supabase Auth**, Three.js (
 | URL | Who | What |
 |---|---|---|
 | `/portal` | InboundPlus **clients** | Dashboards, files & approvals, reports, projects, deployments, AI agents, messages, billing |
-| `/admin` | InboundPlus **team** (admins) | All clients, upload center (files and reports), requests inbox, messages, deployments, projects, users & access |
+| `/admin` | InboundPlus **team** (admins) | Agency command center (MRR, client health, attention list), onboarding pipeline + checklists, client portfolio, AI agent catalogue and deployments, requests, messages, upload center, deployments, users & access |
 
 Anything an admin publishes (files, reports, projects, releases, messages) appears immediately in that client's portal. Anything a client does (approvals, uploads, requests, messages) appears in the admin portal.
 
@@ -68,7 +68,7 @@ The route, sidebar item, page title and search entry are all created from that l
 - AI agent replies are scripted in `pages/portal/Agents.jsx` (`reply()`). Point it at a serverless function that calls the Claude API.
 
 ## Supabase setup (required for real accounts)
-1. Open Supabase → **SQL Editor**, paste all of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**. This creates the tables, the security rules and the private `client-files` storage bucket. It is safe to run again later.
+1. Open Supabase → **SQL Editor**, paste all of [`supabase/schema.sql`](supabase/schema.sql) and click **Run**. Then do the same with [`supabase/002_agency_admin.sql`](supabase/002_agency_admin.sql), which adds onboarding, AI agent and client revenue fields. Both are safe to run again.
 2. Register your own account on `/login`, then make yourself an admin by running this in the SQL Editor:
    ```sql
    update public.profiles set role = 'admin', org_id = null where email = 'you@company.com';
@@ -77,6 +77,12 @@ The route, sidebar item, page title and search entry are all created from that l
 4. Clients who register get their own workspace automatically. To add a teammate to an existing client, ask them to register, then pick their client under **Admin → Users & access**.
 
 Security: Row Level Security makes sure clients can only read their own organization's rows and files, while admins can read and write everything. Clients can only upload files, approve files, send requests and send messages for their own organization.
+
+### Admin features explained
+- **Client health score (0-100):** points are deducted for approvals waiting more than 3 days, requests open more than 5 days, client messages without a reply, no team contact for 14 days, onboarding stuck for more than 30 days, and paused accounts. Bands: Healthy ≥ 75, Watch 50-74, At risk < 50 (`src/lib/health.js`).
+- **Onboarding:** six stages (Signed → Kickoff → Access & assets → Setup → Launch → Live) with a 19-step checklist covering store, GA4, Search Console, Google Ads, Meta Business Manager, HubSpot, brand assets, tracking audit, 90-day plan and launch (`src/data/agency.js`). The client sees their open steps on their dashboard.
+- **AI agents:** the 20-agent catalogue from the proposal. Deploy any agent to a client and track it through Setup → Testing → Live → Paused. Clients see their agents in the portal.
+- **MRR:** taken from the package (Advisory USD 3,000/month, Partner USD 60,000 / 6 months = 10,000/month, Blueprint one-time). It can be edited per client.
 
 ## Supabase settings
 - Env vars are in `.env`: `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (the publishable key, which is safe to expose). Set `VITE_ALLOW_DEMO=false` to hide the demo account.

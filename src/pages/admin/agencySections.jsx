@@ -7,7 +7,8 @@ import { Modal, Panel, Progress, Segmented, StatusBadge } from "../../components
 import { useIsland } from "../../context/IslandContext";
 import D from "../../data";
 import { AGENT_CATALOG, AGENT_STATUSES, PLAN_MRR, STAGES, agentByKey } from "../../data/agency";
-import { createChecklist } from "../../lib/db";
+import { createChecklist, loadSampleData, removeSampleData } from "../../lib/db";
+import { isSampleOrg } from "../../data/sampleAgency";
 import { HEALTH_TONE } from "../../lib/health";
 import { ago, useDb, useOrgs, useTable } from "../../lib/useData";
 import { money } from "../../lib/utils";
@@ -172,6 +173,32 @@ export function AgentsSection({ orgId, title = "AI agents", deployRequest }) {
       </Modal>
     </Panel>
   );
+}
+
+/* ---------------- Sample data loader ---------------- */
+export function SampleDataButton() {
+  const db = useDb(); const island = useIsland();
+  const orgs = useOrgs().rows;
+  const [busy, setBusy] = useState(false);
+  const has = orgs.some(isSampleOrg);
+
+  const load = async () => {
+    setBusy(true);
+    const job = island.notify("Loading sample clients…", { icon: "users", progress: true, persist: true });
+    try { const n = await loadSampleData(db, (p) => job.update(null, p * 100)); job.done(`${n} sample clients added`); }
+    catch (e) { job.done(e.message.includes("column") ? "Run supabase/002_agency_admin.sql first" : "Could not load: " + e.message); }
+    setBusy(false);
+  };
+  const remove = async () => {
+    if (!window.confirm("Remove all sample clients (websites ending in .example) and their data?")) return;
+    setBusy(true);
+    try { const n = await removeSampleData(db); island.notify(`${n} sample clients removed`, { icon: "x" }); }
+    catch (e) { island.notify("Could not remove: " + e.message, { icon: "x" }); }
+    setBusy(false);
+  };
+  return has
+    ? <button className="btn btn-ghost" onClick={remove} disabled={busy} title="Sample clients use websites ending in .example"><Icon name="x" size={16} /> Remove sample data</button>
+    : <button className="btn btn-ghost" onClick={load} disabled={busy}><Icon name="download" size={16} /> Load sample data</button>;
 }
 
 export { StatusBadge, Segmented };

@@ -9,7 +9,7 @@ import { noLegend } from "../../lib/charts";
 import { useAgency } from "../../lib/useAgency";
 import { ago } from "../../lib/useData";
 import { C, money, sum } from "../../lib/utils";
-import { HealthBadge, NewClientModal, StagePill } from "./agencySections";
+import { HealthBadge, NewClientModal, SampleDataButton, StagePill } from "./agencySections";
 
 export default function AdminOverview() {
   const nav = useNavigate();
@@ -34,6 +34,7 @@ export default function AdminOverview() {
   return (
     <>
       <PageHead title="Agency command center" sub="Client portfolio, onboarding, AI agents and revenue — at a glance.">
+        <SampleDataButton />
         <button className="btn btn-ghost" onClick={() => nav("/admin/onboarding")}><Icon name="folder" size={16} /> Onboarding board</button>
         <button className="btn btn-primary" onClick={() => setAdding(true)}><Icon name="plus" size={16} /> New client</button>
       </PageHead>

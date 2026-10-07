@@ -4,16 +4,16 @@
    Both adapters expose the same async API. */
 
 import { supabase } from "./supabase";
-import D from "../data";
-import { ONBOARDING_TEMPLATE, STAGES } from "../data/agency";
+import { ONBOARDING_TEMPLATE } from "../data/agency";
+import { SAMPLE_USERS, buildSampleAgency, isSampleOrg } from "../data/sampleAgency";
 import { store } from "./utils";
 
 export const BUCKET = "client-files";
 export const DEMO_ORG = "demo-andes";
+const SAMPLE_TABLES = ["onboarding_tasks", "agent_deployments", "files", "reports", "deployments", "projects", "requests", "messages"];
 const LOCAL_FILE_LIMIT = 1.5 * 1024 * 1024; // demo mode keeps small files in the browser
 
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
-const iso = (daysAgo = 0, h = 10) => { const d = new Date(); d.setDate(d.getDate() - daysAgo); d.setHours(h, 0, 0, 0); return d.toISOString(); };
 export const fileKind = (name) => {
   const ext = (name.split(".").pop() || "").toLowerCase();
   return ext === "pdf" ? "pdf" : ["xls", "xlsx", "csv"].includes(ext) ? "xls" : ["mp4", "mov", "webm"].includes(ext) ? "mp4"
@@ -30,81 +30,29 @@ const emit = (table) => listeners.forEach((fn) => fn(table));
    LOCAL ADAPTER (demo)
    ===================================================================== */
 function seed() {
-  const A = DEMO_ORG, B = "demo-pacifico", C = "demo-ruta", E = "demo-nativa", F = "demo-kallpa";
-  const day = (d) => iso(d).slice(0, 10);
-  const org = (id, name, plan, mrr, platform, stage, manager, industry, contact, daysAgo, renewIn, status = "Active") => ({
-    id, name, plan, mrr, platform, stage, manager, industry, contact_name: contact, contact_email: `${contact.split(" ")[0].toLowerCase()}@${name.split(" ")[0].toLowerCase()}.example`,
-    website: `${name.split(" ")[0].toLowerCase()}.example`, status, start_date: day(daysAgo), renewal_date: renewIn == null ? null : day(-renewIn), created_at: iso(daysAgo),
-  });
-  const checklist = (orgId, doneUntil) => ONBOARDING_TEMPLATE.map(([section, title], i) => ({
-    id: uid(), org_id: orgId, section, title, position: i, done: STAGES.indexOf(section) < STAGES.indexOf(doneUntil) || doneUntil === "Live", created_at: iso(30, 8),
-  }));
-  return {
-    organizations: [
-      org(A, "Andes Outdoor Co.", "Commerce Growth Partner", 10000, "Shopify", "Live", "Lucía Ramos", "Sportswear", "Carla Mendoza", 120, 60),
-      org(B, "Casa Pacífico Home", "Ecommerce Growth Advisory", 3000, "WooCommerce", "Live", "Lucía Ramos", "Home & deco", "Sofía Rivas", 60, 20),
-      org(C, "Ruta Bikes Perú", "Ecommerce Growth Blueprint", 0, "VTEX", "Setup", "Sebastián G.", "Bikes & outdoor", "Mateo Quispe", 9, null, "Onboarding"),
-      org(E, "Nativa Café", "Ecommerce Growth Advisory", 3000, "Shopify", "Kickoff", "Sebastián G.", "Food & beverage", "Andrea Flores", 3, 120, "Onboarding"),
-      org(F, "Kallpa Fitness", "Commerce Growth Partner", 10000, "WooCommerce", "Access & assets", "Lucía Ramos", "Fitness", "Jorge Salas", 36, 170, "Onboarding"),
-    ],
-    onboarding_tasks: [...checklist(A, "Live"), ...checklist(B, "Live"), ...checklist(C, "Setup"), ...checklist(E, "Kickoff"), ...checklist(F, "Access & assets")]
-      .map((t) => (t.org_id === F && t.title.startsWith("Meta") ? t : t.org_id === F && t.section === "Access & assets" && t.position % 2 ? { ...t, done: true } : t)),
-    agent_deployments: [
-      { id: uid(), org_id: A, agent_key: "customer-service", channel: "WhatsApp + Web chat", status: "Live", conversations: 1842, notes: "Sofía persona, ES/EN", created_at: iso(70) },
-      { id: uid(), org_id: A, agent_key: "cart-recovery", channel: "WhatsApp", status: "Testing", conversations: 96, notes: "10% max incentive", created_at: iso(12) },
-      { id: uid(), org_id: A, agent_key: "ad-copy", channel: "Meta + Google Ads", status: "Live", conversations: 326, notes: "", created_at: iso(50) },
-      { id: uid(), org_id: A, agent_key: "exec-reporting", channel: "Client portal", status: "Live", conversations: 6, notes: "Monthly + quarterly", created_at: iso(90) },
-      { id: uid(), org_id: B, agent_key: "customer-service", channel: "Web chat", status: "Setup", conversations: 0, notes: "Waiting for FAQ document", created_at: iso(5) },
-      { id: uid(), org_id: B, agent_key: "catalog-seo", channel: "WooCommerce", status: "Live", conversations: 412, notes: "412 products rewritten", created_at: iso(30) },
-    ],
-    users: [
-      { id: "u-admin", email: "team@inboundplus.example", full_name: "InboundPlus Admin", role: "admin", org_id: null, created_at: iso(200) },
-      { id: "u-carla", email: "demo@andesoutdoor.example", full_name: "Carla Mendoza", role: "client", org_id: A, created_at: iso(120) },
-      { id: "u-diego", email: "diego@andesoutdoor.example", full_name: "Diego Paredes", role: "client", org_id: A, created_at: iso(100) },
-      { id: "u-sofia", email: "sofia@casapacifico.example", full_name: "Sofía Rivas", role: "client", org_id: B, created_at: iso(60) },
-      { id: "u-mateo", email: "mateo@rutabikes.example", full_name: "Mateo Quispe", role: "client", org_id: C, created_at: iso(9) },
-      { id: "u-andrea", email: "andrea@nativa.example", full_name: "Andrea Flores", role: "client", org_id: E, created_at: iso(3) },
-    ],
-    files: [
-      ...D.files.map((f, i) => ({ id: uid(), org_id: A, name: f.name, size: f.size, kind: f.type, path: null, status: f.status, uploaded_by: f.by, created_at: iso(i * 3 + 1) })),
-      { id: uid(), org_id: B, name: "Home_Collection_Banner.fig", size: "6.1 MB", kind: "fig", status: "Needs approval", uploaded_by: "Creative team", created_at: iso(2) },
-      { id: uid(), org_id: C, name: "Onboarding_Checklist.pdf", size: "220 KB", kind: "pdf", status: "Shared", uploaded_by: "InboundPlus", created_at: iso(8) },
-    ],
-    reports: [
-      ...D.reports.map((r, i) => ({ id: uid(), org_id: A, name: r.name, type: r.type, summary: null, path: null, created_at: iso([3, 5, 18, 32, 45][i] ?? i * 10) })),
-      { id: uid(), org_id: B, name: "September 2026 Performance Report", type: "Monthly", summary: "Organic sessions +12%, ROAS 3.9×.", created_at: iso(4) },
-    ],
-    deployments: [
-      ...D.deployments.map((d, i) => ({ id: uid(), org_id: A, app: d.app, env: d.env, version: d.version, status: d.status, notes: d.notes, by_name: d.by, created_at: iso([0, 1, 3, 4, 7][i] ?? i, 9 + i) })),
-      { id: uid(), org_id: B, app: "Storefront (WooCommerce)", env: "Production", version: "v1.6.0", status: "success", notes: "New home collection pages", by_name: "Web team", created_at: iso(2) },
-    ],
-    projects: [
-      ...D.projects.map((p, i) => ({ id: uid(), org_id: A, name: p.name, type: p.type, progress: p.progress, status: p.status, due: p.due, created_at: iso(40 - i * 5) })),
-      { id: uid(), org_id: B, name: "SEO content sprint – Home & Deco", type: "SEO", progress: 35, status: "On track", due: "Nov 20, 2026", created_at: iso(20) },
-      { id: uid(), org_id: C, name: "Ecommerce Growth Blueprint", type: "Strategy", progress: 15, status: "On track", due: "Oct 30, 2026", created_at: iso(8) },
-    ],
-    requests: [
-      { id: uid(), org_id: A, title: "Black Friday landing page", type: "E-commerce", notes: "Need it live by Nov 20.", status: "In review", created_by: "Carla Mendoza", created_at: iso(1) },
-      { id: uid(), org_id: B, title: "Add WhatsApp chat to the store", type: "AI Agent", notes: "", status: "New", created_by: "Sofía Rivas", created_at: iso(7, 8) },
-    ],
-    messages: [
-      { id: uid(), org_id: A, sender_role: "agency", sender_name: "Lucía Ramos", body: "Hi! The September report is ready in Reports. Revenue is up 18% vs August 🎉", created_at: iso(0, 9) },
-      { id: uid(), org_id: A, sender_role: "agency", sender_name: "Lucía Ramos", body: "Could you also approve the new homepage hero in Files when you have a minute?", created_at: iso(0, 9) },
-      { id: uid(), org_id: B, sender_role: "client", sender_name: "Sofía Rivas", body: "Hello team, can we review the banner tomorrow?", created_at: iso(2, 8) },
-      { id: uid(), org_id: E, sender_role: "agency", sender_name: "Sebastián G.", body: "Welcome to InboundPlus! Your kickoff call is booked for Thursday.", created_at: iso(3, 11) },
-    ],
-  };
+  const S = buildSampleAgency();
+  const idOf = (key) => (key === "andes" ? DEMO_ORG : `demo-${key}`);
+  const db = { organizations: S.organizations.map(({ key, ...o }) => ({ id: idOf(key), ...o })), users: SAMPLE_USERS(idOf) };
+  for (const t of SAMPLE_TABLES) db[t] = S[t].map(({ org, ...r }) => ({ id: uid(), org_id: idOf(org), path: null, ...r }));
+  return db;
 }
 
 const local = {
   kind: "local",
-  _db() { let db = store.get("db_v2", null); if (!db || !db.organizations) { db = seed(); store.set("db_v2", db); } return db; },
-  _save(db, table) { store.set("db_v2", db); emit(table); },
+  _db() { let db = store.get("db_v3", null); if (!db || !db.organizations) { db = seed(); store.set("db_v3", db); } return db; },
+  _save(db, table) { store.set("db_v3", db); emit(table); },
 
   async listOrgs() { return [...this._db().organizations]; },
   async getOrg(id) { return this._db().organizations.find((o) => o.id === id) || null; },
   async createOrg(o) { const db = this._db(); const row = { id: uid(), status: "Onboarding", stage: "Signed", created_at: new Date().toISOString(), ...o }; db.organizations.unshift(row); this._save(db, "organizations"); return row; },
   async updateOrg(id, patch) { const db = this._db(); db.organizations = db.organizations.map((o) => (o.id === id ? { ...o, ...patch } : o)); this._save(db, "organizations"); },
+  async removeOrg(id) {
+    const db = this._db();
+    db.organizations = db.organizations.filter((o) => o.id !== id);
+    for (const t of SAMPLE_TABLES) db[t] = (db[t] || []).filter((r) => r.org_id !== id);
+    db.users = db.users.map((u) => (u.org_id === id ? { ...u, org_id: null } : u));
+    this._save(db, "*");
+  },
 
   async list(table, orgId) {
     const rows = this._db()[table] || [];
@@ -138,7 +86,7 @@ const local = {
     this._save(db, "organizations");
     return org.id;
   },
-  reset() { store.del("db_v2"); emit("*"); },
+  reset() { store.del("db_v3"); emit("*"); },
 };
 
 /* =====================================================================
@@ -152,6 +100,7 @@ const remote = {
   async getOrg(id) { return must(await supabase.from("organizations").select("*").eq("id", id).maybeSingle()); },
   async createOrg(o) { const r = must(await supabase.from("organizations").insert(o).select().single()); emit("organizations"); return r; },
   async updateOrg(id, patch) { must(await supabase.from("organizations").update(patch).eq("id", id)); emit("organizations"); },
+  async removeOrg(id) { must(await supabase.from("organizations").delete().eq("id", id)); emit("*"); },
 
   async list(table, orgId) {
     let q = supabase.from(table).select("*").order("created_at", { ascending: false });
@@ -186,6 +135,31 @@ const remote = {
   async listUsers() { return must(await supabase.from("profiles").select("*").order("created_at", { ascending: false })); },
   async updateUser(id, patch) { must(await supabase.from("profiles").update(patch).eq("id", id)); emit("users"); },
 };
+
+/** Load the sample agency dataset (10 fictional clients) into the current backend. Returns the number of clients added. */
+export async function loadSampleData(db, onProgress = () => {}) {
+  const S = buildSampleAgency();
+  if (db.kind === "local") { db.reset(); onProgress(1); return S.organizations.length; } // demo: restore the original demo dataset
+  const ids = {};
+  for (let i = 0; i < S.organizations.length; i++) {
+    const { key, ...o } = S.organizations[i];
+    ids[key] = (await db.createOrg(o)).id;
+    onProgress((i + 1) / (S.organizations.length + SAMPLE_TABLES.length));
+  }
+  for (let i = 0; i < SAMPLE_TABLES.length; i++) {
+    const t = SAMPLE_TABLES[i];
+    if (S[t].length) await db.insertMany(t, S[t].map(({ org, ...r }) => ({ org_id: ids[org], ...r })));
+    onProgress((S.organizations.length + i + 1) / (S.organizations.length + SAMPLE_TABLES.length));
+  }
+  return S.organizations.length;
+}
+
+/** Remove every sample client (website ending in ".example") and all of its data. */
+export async function removeSampleData(db) {
+  const orgs = (await db.listOrgs()).filter(isSampleOrg);
+  for (const o of orgs) await db.removeOrg(o.id);
+  return orgs.length;
+}
 
 /** Create the default onboarding checklist for a client. */
 export async function createChecklist(db, orgId) {

@@ -519,3 +519,5 @@ a.nav-item { text-decoration: none; }
 .check-item.done span { color: var(--muted); text-decoration: line-through; }
 .agent-ico { width: 30px; height: 30px; border-radius: 9px; background: var(--purple-soft); color: var(--purple); display: inline-grid; place-items: center; flex-shrink: 0; }
 .agent-ico.lg { width: 40px; height: 40px; border-radius: 11px; }
+.nav { overflow-x: hidden; }
+.nav-item > span:not(.count):not(.avatar) { min-width: 0; flex: 1; }

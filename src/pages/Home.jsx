@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "../components/Icon";
-import { BarScene, Chips, Tilt } from "../components/ui";
+import { Bar } from "react-chartjs-2";
+import { Chips, Tilt } from "../components/ui";
 import D from "../data";
-import { PALETTE_HEX } from "../lib/utils";
+import { C } from "../lib/utils";
 
 const SITE = "https://inboundplus.agency/";
 const unique = (arr) => ["All", ...new Set(arr)];
@@ -68,11 +69,20 @@ export default function Home() {
               <img src="/img/partner-hubspot.png" alt="HubSpot Partner" />
             </div>
           </div>
-          <BarScene className="scene-box" height={480} values={D.analytics.channelMonthly.slice(0, 4)} colors={PALETTE_HEX.slice(0, 3).concat(0xfdc9ad)} radius={15}
-            tooltip={(r, c, v) => `${D.analytics.channels.labels[r]} · ${m6[c]}: <b>$${v}k</b> <small>(sample)</small>`}>
-            <div className="scene-float" style={{ top: 18, right: 18 }}>Client portal preview<b>Revenue by channel</b><span className="sample-pill">Sample data</span></div>
-            <span className="scene-hint">Drag to rotate · hover a bar</span>
-          </BarScene>
+          <div className="card" style={{ padding: 22 }}>
+            <div className="flex between" style={{ marginBottom: 14 }}>
+              <div><small className="muted">Client portal preview</small><h3 style={{ marginTop: 2 }}>Revenue by channel</h3></div>
+              <span className="sample-pill">Sample data</span>
+            </div>
+            <div style={{ height: 360 }}>
+              <Bar data={{ labels: m6, datasets: D.analytics.channelMonthly.slice(0, 4).map((row, i) => ({
+                label: D.analytics.channels.labels[i], data: row, backgroundColor: [C.orange, C.purple, C.sky, C.peach][i], borderRadius: 4,
+              })) }} options={{
+                plugins: { legend: { position: "bottom" }, tooltip: { callbacks: { label: (x) => ` ${x.dataset.label}: $${x.raw}k` } } },
+                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: C.grid }, ticks: { callback: (v) => "$" + v + "k" } } },
+              }} />
+            </div>
+          </div>
         </div>
       </header>
 

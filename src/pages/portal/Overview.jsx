@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
 import Icon from "../../components/Icon";
-import { BarScene, Kpi, PageHead, Panel, Progress, Segmented, StatusBadge } from "../../components/ui";
+import { Kpi, PageHead, Panel, Progress, Segmented, StatusBadge } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { usePortal } from "../../context/PortalContext";
 import D from "../../data";
 import { axes, gauge, rightAxis } from "../../lib/charts";
 import { ago, useTable } from "../../lib/useData";
-import { C, PALETTE, PALETTE_HEX, fmt, money, pct, sum } from "../../lib/utils";
+import { C, PALETTE, fmt, money, pct, sum } from "../../lib/utils";
 
 const A = D.analytics, n = A.revenue.length, m6 = D.months.slice(-6);
 const KEEP = { all: [0, 1, 2, 3, 4, 5], paid: [1, 2], organic: [0, 3, 4, 5] };
@@ -23,7 +23,6 @@ export default function Overview() {
   const onboarding = [...useTable("onboarding_tasks", session.orgId || undefined).rows].sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
   const obDone = onboarding.filter((t) => t.done).length;
   const r = D.client.retainer;
-  const scene = A.channelMonthly.map((row, i) => (KEEP[mode].includes(i) ? row : row.map(() => 0)));
 
   return (
     <>
@@ -61,10 +60,15 @@ export default function Overview() {
       </div>
 
       <div className="grid g-21">
-        <Panel title="Revenue by channel — 3D view" sub="Last 6 months · drag to rotate, hover a bar for details"
+        <Panel title="Revenue by channel" sub="Last 6 months · hover a bar for details"
           actions={<Segmented value={mode} onChange={setMode} options={[{ value: "all", label: "All channels" }, { value: "paid", label: "Paid only" }, { value: "organic", label: "Organic only" }]} />}>
-          <BarScene values={scene} colors={PALETTE_HEX} radius={17} tooltip={(ri, c, v) => `${A.channels.labels[ri]} · ${m6[c]}<br><b>$${v}k revenue</b>`} />
-          <div className="legend" style={{ marginTop: 12 }}>{A.channels.labels.map((l, i) => <span key={l}><i style={{ background: PALETTE[i] }} />{l}</span>)}</div>
+          <div className="chart-box lg">
+            <Bar data={{ labels: m6, datasets: A.channelMonthly.map((row, i) => ({ label: A.channels.labels[i], data: row, backgroundColor: PALETTE[i], borderRadius: 4 }))
+              .filter((_, i) => KEEP[mode].includes(i)) }}
+              options={{ plugins: { legend: { display: false }, tooltip: { mode: "index", intersect: false, callbacks: { label: (x) => ` ${x.dataset.label}: $${x.raw}k` } } },
+                scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, grid: { color: C.grid }, border: { display: false }, ticks: { callback: (v) => "$" + v + "k" } } } }} />
+          </div>
+          <div className="legend" style={{ marginTop: 12 }}>{A.channels.labels.map((l, i) => KEEP[mode].includes(i) && <span key={l}><i style={{ background: PALETTE[i] }} />{l}</span>)}</div>
         </Panel>
         <Panel title="Traffic sources" sub="Share of sessions">
           <div className="chart-box sm">

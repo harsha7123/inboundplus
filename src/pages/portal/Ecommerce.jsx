@@ -1,9 +1,9 @@
-import { BarScene, Delta, Kpi, PageHead, Panel, Progress, SortableTable, StatusBadge } from "../../components/ui";
+import { Bar } from "react-chartjs-2";
+import { Delta, Kpi, PageHead, Panel, Progress, SortableTable, StatusBadge } from "../../components/ui";
 import D from "../../data";
-import { PALETTE_HEX, money } from "../../lib/utils";
+import { C, PALETTE, fmt, money } from "../../lib/utils";
 
 const P = D.analytics.topProducts;
-const SCENE = P.map((p) => [0.7, 0.85, 0.92, 1].map((f) => Math.round((p.revenue / 1000) * f)));
 const TESTS = [
   ["One-page checkout", "Checkout", 9.4, 96, "Winner"],
   ["Free-shipping progress bar", "Cart", 5.1, 88, "Running"],
@@ -30,9 +30,12 @@ export default function Ecommerce() {
             { label: "Trend", render: (x) => <Delta v={x} /> },
           ]} />
         </Panel>
-        <Panel title="Product revenue — 3D">
-          <BarScene height={300} values={SCENE} colors={PALETTE_HEX} radius={14} tooltip={(r, c, v) => `${P[r].name} · ${D.months.slice(-4)[c]}<br><b>$${v}k</b>`} />
-          <p className="muted" style={{ fontSize: 12, marginTop: 8 }}>Bars = last 4 months revenue per product. Drag to rotate.</p>
+        <Panel title="Product revenue" sub="Last 30 days">
+          <div className="chart-box">
+            <Bar data={{ labels: P.map((p) => p.name), datasets: [{ label: "Revenue", data: P.map((p) => p.revenue), backgroundColor: PALETTE, borderRadius: 5 }] }}
+              options={{ indexAxis: "y", plugins: { legend: { display: false }, tooltip: { callbacks: { label: (x) => " " + money(x.raw) } } },
+                scales: { x: { grid: { color: C.grid }, border: { display: false }, ticks: { callback: (v) => "$" + fmt(v) } }, y: { grid: { display: false } } } }} />
+          </div>
         </Panel>
       </div>
       <Panel title="CRO experiments" sub="A/B tests run by the InboundPlus CRO team">

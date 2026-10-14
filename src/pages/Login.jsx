@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import { BarScene } from "../components/ui";
+import { Bar } from "react-chartjs-2";
 import { homeFor, useAuth } from "../context/AuthContext";
 import { useIsland } from "../context/IslandContext";
 import { ALLOW_DEMO } from "../lib/supabase";
 import { validEmail } from "../lib/utils";
 
 const PRIVACY = "https://inboundplus.agency/politica-de-privacidad-y-uso-de-datos/";
-const SCENE = [[3, 4, 5, 6, 7, 9], [2, 3, 4, 5, 6, 7], [1, 2, 3, 4, 4, 5]];
+const MONTHS = ["May", "Jun", "Jul", "Aug", "Sep", "Oct"];
+const GROWTH = [4, 5, 6, 7, 8, 10]; // decorative growth bars
 
 export default function Login() {
   const auth = useAuth();
@@ -73,9 +74,11 @@ export default function Login() {
         <Link className="brand" to="/"><img className="brand-logo lg" src="/img/logo.png" alt="InboundPlus" /><span className="brand-sub">Client Hub</span></Link>
         <h2 style={{ marginTop: 36 }}>Scale your e-commerce with growth systems + AI.</h2>
         <p>Sales, SEO, campaigns, AI agents, deployments and reports — all in one client portal.</p>
-        <BarScene className="scene-box" height="auto" values={SCENE} colors={[0xf26b35, 0xffa36e, 0x5551d3]} floor={0x1c232b} radius={19} sceneHeight={4}>
-          <span className="scene-hint">Drag to rotate</span>
-        </BarScene>
+        <div style={{ flex: 1, minHeight: 280, marginTop: 32, position: "relative" }}>
+          <Bar data={{ labels: MONTHS, datasets: [{ label: "Online sales", data: GROWTH, backgroundColor: "#f26b35", borderRadius: 6 }] }}
+            options={{ plugins: { legend: { display: false }, tooltip: { enabled: false } },
+              scales: { x: { grid: { display: false }, border: { display: false }, ticks: { color: "#9aa3b5" } }, y: { display: false } } }} />
+        </div>
       </aside>
 
       <main className="auth-main">

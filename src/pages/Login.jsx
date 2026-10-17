@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Bar } from "react-chartjs-2";
 import { homeFor, useAuth } from "../context/AuthContext";
+import SocialLogin from "../components/SocialLogin";
 import { useIsland } from "../context/IslandContext";
 import { ALLOW_DEMO } from "../lib/supabase";
 import { validEmail } from "../lib/utils";
@@ -24,6 +25,12 @@ export default function Login() {
   const set = (k) => (e) => setF({ ...f, [k]: e.target.type === "checkbox" ? e.target.checked : e.target.value });
 
   useEffect(() => { if (auth.recovery) setView("reset"); }, [auth.recovery]);
+  // Google / Microsoft send errors back in the URL (e.g. user cancelled, provider misconfigured)
+  useEffect(() => {
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    const msg = params.get("error_description") || hash.get("error_description");
+    if (msg) { setView("login"); setTimeout(() => setErr(msg.replace(/\+/g, " ")), 0); window.history.replaceState(null, "", "/login"); }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     document.title = ({ register: "Register", reset: "New password", notice: "Check your email" }[view] || "Log in") + " · InboundPlus";
     setErr("");
@@ -94,6 +101,7 @@ export default function Login() {
             <form onSubmit={login} noValidate>
               <h1>Welcome back</h1>
               <p className="sub">Log in to your client portal.</p>
+              <SocialLogin action="Continue" />
               <label className="field"><span>Work email</span><input className="input" type="email" value={f.email} onChange={set("email")} autoComplete="username" placeholder="you@company.com" /></label>
               <label className="field"><span>Password</span><input className="input" type="password" value={f.password} onChange={set("password")} autoComplete="current-password" placeholder="••••••••" /></label>
               <div className="auth-foot"><span /><a href="#" onClick={forgot}>Forgot password?</a></div>
@@ -109,6 +117,7 @@ export default function Login() {
             <form onSubmit={register} noValidate>
               <h1>Create your account</h1>
               <p className="sub">Set up your company's client portal.</p>
+              <SocialLogin action="Sign up" />
               <div className="row-2">
                 <label className="field"><span>Full name</span><input className="input" value={f.name} onChange={set("name")} autoComplete="name" /></label>
                 <label className="field"><span>Company</span><input className="input" value={f.company} onChange={set("company")} autoComplete="organization" /></label>

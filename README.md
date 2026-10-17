@@ -97,3 +97,7 @@ Security: Row Level Security makes sure clients can only read their own organiza
 ## Payments (Stripe)
 Invoices and card payments through Stripe Checkout, plus a webhook that marks invoices Paid. Setup and test steps: [PAYMENTS.md](PAYMENTS.md).
 
+
+## Google & Microsoft login
+Setup steps (Google Cloud + Microsoft Entra + Supabase providers): [AUTH_SETUP.md](AUTH_SETUP.md).
+

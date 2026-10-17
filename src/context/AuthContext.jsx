@@ -109,6 +109,21 @@ export function AuthProvider({ children }) {
     store.set("session", s); setSession(s); return s;
   }, []);
 
+  /** Social login: provider = "google" | "azure" (Microsoft). Redirects to the provider, then back to /login. */
+  const signInWithProvider = useCallback(async (provider) => {
+    if (!supabase) throw new Error("Social login needs Supabase to be configured.");
+    store.del("session");
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${base()}/login`,
+        scopes: provider === "azure" ? "email openid profile" : undefined,
+        queryParams: provider === "google" ? { prompt: "select_account" } : undefined,
+      },
+    });
+    if (error) throw error;
+  }, []);
+
   const signOut = useCallback(async () => {
     const wasDemo = store.get("session", null)?.demo;
     store.del("session");
@@ -118,8 +133,8 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(() => ({
     session, loading: session === undefined, enabled: !!supabase, recovery,
-    signIn, signUp, resetPassword, updatePassword, updateProfile, demo, signOut,
-  }), [session, recovery, signIn, signUp, resetPassword, updatePassword, updateProfile, demo, signOut]);
+    signIn, signUp, resetPassword, updatePassword, updateProfile, demo, signOut, signInWithProvider,
+  }), [session, recovery, signIn, signUp, resetPassword, updatePassword, updateProfile, demo, signOut, signInWithProvider]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
 }

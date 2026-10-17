@@ -527,3 +527,10 @@ a.nav-item { text-decoration: none; }
 .social-btn { width: 100%; gap: 10px; font-weight: 500; }
 .social-btn.off { opacity: .55; }
 
+
+/* ---------- Legal pages ---------- */
+.legal h1 { color: var(--navy); margin-bottom: 6px; }
+.legal h2 { font-size: 18px; margin: 28px 0 8px; }
+.legal p, .legal li { color: #334155; line-height: 1.7; }
+.legal ul { padding-left: 20px; }
+

@@ -190,7 +190,7 @@ export default function Home() {
       <footer className="site-footer">
         <div className="wrap">
           <span>©2026 InboundPlus | Ecommerce Growth Partner</span>
-          <span>Client portal prototype by Synchronous Consulting · portal dashboards show sample data</span>
+          <span><Link to="/privacy">Privacy policy</Link> · <Link to="/terms">Terms of use</Link> · Client portal by Synchronous Consulting</span>
         </div>
       </footer>
     </>

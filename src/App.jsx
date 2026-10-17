@@ -6,6 +6,7 @@ import ClientDetail from "./pages/admin/ClientDetail";
 import { PortalProvider } from "./context/PortalContext";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import { Privacy, Terms } from "./pages/Legal";
 import PortalLayout from "./layouts/PortalLayout";
 import { PORTAL_PAGES } from "./pages/portal/registry";
 
@@ -23,6 +24,8 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
       <Route path="/register" element={<Navigate to="/login?mode=register" replace />} />
       <Route path="/portal" element={<RequireAuth><PortalProvider><PortalLayout /></PortalProvider></RequireAuth>}>
         {PORTAL_PAGES.map(({ path, Component }) =>

@@ -60,6 +60,31 @@ If it says "not connected", the message lists which variable is missing. Add it 
 
 More test cards: `4000 0025 0000 3155` (asks for 3-D Secure authentication) and `4000 0000 0000 9995` (declined, to show an error).
 
+## Live USD 10 test with the client's real Stripe account
+Do this once the client's Stripe account is **activated**: business details verified and a bank account added for payouts.
+
+1. **The client creates the live keys** in their Stripe account → switch **Test mode OFF** → **Developers → API keys** → copy the **Secret key** (`sk_live_…`).
+   - Best practice: the client pastes it into Vercel themselves, or shares it once through a password manager. Never send it by email, WhatsApp or chat.
+2. **The client creates a live webhook**: Stripe (Live mode) → **Developers → Webhooks → Add endpoint**
+   - URL: `https://inboundplus.vercel.app/api/stripe-webhook`
+   - Events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`
+   - Copy the **Signing secret** (`whsec_…`). Live and test webhooks have **different** secrets.
+3. **Vercel** → project → **Settings → Environment Variables** → edit (or add) for **Production**:
+   - `STRIPE_SECRET_KEY` = `sk_live_…`
+   - `STRIPE_WEBHOOK_SECRET` = the **live** `whsec_…`
+   - `SUPABASE_SERVICE_ROLE_KEY` stays the same.
+4. **Redeploy**: Vercel → Deployments → latest → **⋯ → Redeploy**. Environment changes only apply after a redeploy.
+5. **Check**: Admin → **Billing & payments** must show 🟢 *Stripe connected · client's business name* and 🔴 **LIVE mode — real money**.
+6. **Create the test invoice**: **New invoice** → client → description "Live payment test" → **USD 10.00** → **Create invoice**.
+7. **Pay it with a real card**: click **Pay**, or log in as that client → Billing → **Pay now**.
+8. **Confirm with the client**:
+   - The invoice turns **Paid** in the portal within a few seconds.
+   - It appears in the client's **Stripe Dashboard → Payments** (Live mode), shows as USD 10.00 Succeeded, and the **Stripe ↗** link opens it.
+   - Stripe pays it out to the client's bank account on their normal payout schedule.
+9. **Refund the test if you want**: Stripe Dashboard → the payment → **Refund**. Stripe keeps its processing fee (about USD 0.59 for a USD 10 US card payment), so the refund returns USD 10.00 to the card, but the fee is not given back to the client's Stripe balance.
+
+To go back to test mode, put the `sk_test_…` key and test `whsec_…` back into Vercel and redeploy.
+
 ## 7. Going live later
 1. Finish Stripe's account activation (company details and bank account for payouts).
 2. Switch Stripe to **Live mode** and create a live webhook with the same URL and events.

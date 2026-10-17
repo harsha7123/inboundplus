@@ -27,7 +27,7 @@ const CLIENTS = [
 /** Returns { organizations, onboarding_tasks, agent_deployments, files, reports, deployments, projects, requests, messages }.
     Child rows reference their client with `org` (the client key); callers map keys to real ids. */
 export function buildSampleAgency() {
-  const out = { organizations: [], onboarding_tasks: [], agent_deployments: [], files: [], reports: [], deployments: [], projects: [], requests: [], messages: [] };
+  const out = { organizations: [], onboarding_tasks: [], agent_deployments: [], files: [], reports: [], deployments: [], projects: [], requests: [], messages: [], invoices: [] };
   const add = (t, org, row) => out[t].push({ org, ...row });
 
   for (const [key, name, plan, mrr, platform, stage, status, manager, industry, contact, started, renew] of CLIENTS) {
@@ -129,6 +129,22 @@ export function buildSampleAgency() {
 
   /* ---------- Brisa Swimwear (just signed) ---------- */
   add("messages", "brisa", { sender_role: "agency", sender_name: M.paula, body: "Hi Natalie, welcome aboard! Please fill in the onboarding questionnaire.", created_at: iso(0, 14) });
+
+  /* ---------- Invoices (amounts follow the real InboundPlus packages) ---------- */
+  const inv = (org, n, description, usd, status, daysAgo, paidDaysAgo) => add("invoices", org, {
+    number: `INV-2026-${String(n).padStart(4, "0")}`, description, amount_cents: usd * 100, currency: "USD", status,
+    due_date: day(daysAgo - 14), paid_at: paidDaysAgo == null ? null : iso(paidDaysAgo, 15),
+    payer_email: paidDaysAgo == null ? null : "accounts@client.example", created_at: iso(daysAgo, 9),
+  });
+  inv("andes", 101, "Commerce Growth Partner – October", 10000, "Due", 6);
+  inv("andes", 92, "Commerce Growth Partner – September", 10000, "Paid", 36, 31);
+  inv("andes", 85, "AI Support Agent – setup", 1500, "Paid", 48, 45);
+  inv("pacifico", 99, "Ecommerce Growth Advisory – October", 3000, "Paid", 6, 2);
+  inv("selva", 98, "Ecommerce Growth Advisory – October", 3000, "Paid", 6, 4);
+  inv("miraflores", 97, "Commerce Growth Partner – October", 10000, "Due", 6);
+  inv("miraflores", 90, "Commerce Growth Partner – September", 10000, "Due", 36);
+  inv("ruta", 100, "Ecommerce Growth Blueprint", 2000, "Due", 2);
+  inv("kallpa", 96, "Commerce Growth Partner – October", 10000, "Paid", 8, 5);
 
   return out;
 }

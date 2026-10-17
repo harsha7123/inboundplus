@@ -9,10 +9,11 @@ import { useAgency } from "../../lib/useAgency";
 import { fmtDate, useDb, useUsers } from "../../lib/useData";
 import { money } from "../../lib/utils";
 import { AgentsSection, HealthBadge, OnboardingSection, PLANS, PLATFORMS, StagePill } from "./agencySections";
+import { InvoicesSection, useStripeStatus } from "./Payments";
 import { ChatSection, DeploySection, FilesSection, ProjectsSection, ReportsSection, RequestsSection } from "./sections";
 
 const TABS = [
-  ["overview", "Overview", "home"], ["onboarding", "Onboarding", "survey"], ["agents", "AI agents", "bot"], ["files", "Files", "file"],
+  ["overview", "Overview", "home"], ["onboarding", "Onboarding", "survey"], ["agents", "AI agents", "bot"], ["billing", "Billing", "card"], ["files", "Files", "file"],
   ["reports", "Reports", "report"], ["projects", "Projects", "folder"], ["deployments", "Deployments", "rocket"], ["requests", "Requests", "send"], ["messages", "Messages", "chat"],
 ];
 
@@ -24,6 +25,7 @@ export default function ClientDetail() {
   const users = useUsers().rows.filter((u) => u.org_id === id);
   const [tab, setTab] = useState("overview");
   const [edit, setEdit] = useState(null);
+  const stripeStatus = useStripeStatus();
   useEffect(() => { setTab("overview"); }, [id]);
   useEffect(() => { if (c) document.title = `${c.name} · InboundPlus Admin`; }, [c?.name]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -89,6 +91,7 @@ export default function ClientDetail() {
       )}
       {tab === "onboarding" && <OnboardingSection org={c} />}
       {tab === "agents" && <AgentsSection orgId={id} />}
+      {tab === "billing" && <InvoicesSection orgId={id} status={stripeStatus} returnPath={`/admin/clients/${id}`} />}
       {tab === "files" && <FilesSection orgId={id} />}
       {tab === "reports" && <ReportsSection orgId={id} />}
       {tab === "projects" && <ProjectsSection orgId={id} />}

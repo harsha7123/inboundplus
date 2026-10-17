@@ -93,3 +93,7 @@ Security: Row Level Security makes sure clients can only read their own organiza
 
 ## Vercel
 `vercel.json` already sets framework **Vite**, build command `npm run build`, output directory `dist`, SPA rewrites and security headers. Pushing to `main` deploys automatically.
+
+## Payments (Stripe)
+Invoices and card payments through Stripe Checkout, plus a webhook that marks invoices Paid. Setup and test steps: [PAYMENTS.md](PAYMENTS.md).
+

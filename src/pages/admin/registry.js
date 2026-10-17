@@ -3,6 +3,7 @@ import AdminOverview from "./AdminOverview";
 import Onboarding from "./Onboarding";
 import Clients from "./Clients";
 import Agents from "./Agents";
+import Payments from "./Payments";
 import UploadCenter from "./UploadCenter";
 import Requests from "./Requests";
 import Inbox from "./Inbox";
@@ -14,6 +15,7 @@ export const ADMIN_PAGES = [
   { path: "onboarding", label: "Onboarding", icon: "survey", group: "Agency", Component: Onboarding, badge: "onboarding" },
   { path: "clients", label: "Clients", icon: "users", group: "Agency", Component: Clients },
   { path: "agents", label: "AI agents", icon: "bot", group: "Agency", Component: Agents },
+  { path: "payments", label: "Billing & payments", icon: "card", group: "Agency", Component: Payments },
   { path: "requests", label: "Requests", icon: "send", group: "Delivery", Component: Requests, badge: "requests" },
   { path: "messages", label: "Messages", icon: "chat", group: "Delivery", Component: Inbox, badge: "messages" },
   { path: "upload", label: "Upload center", icon: "upload", group: "Delivery", Component: UploadCenter },

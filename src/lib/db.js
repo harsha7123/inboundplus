@@ -1,4 +1,4 @@
-/* Data layer shared by the client portal and the admin portal.
+﻿/* Data layer shared by the client portal and the admin portal.
    - remote: Supabase tables + "client-files" storage bucket (see supabase/schema.sql)
    - local:  browser storage, used by the demo accounts (works without any backend)
    Both adapters expose the same async API. */
@@ -10,7 +10,7 @@ import { store } from "./utils";
 
 export const BUCKET = "client-files";
 export const DEMO_ORG = "demo-andes";
-const SAMPLE_TABLES = ["onboarding_tasks", "agent_deployments", "files", "reports", "deployments", "projects", "requests", "messages"];
+const SAMPLE_TABLES = ["onboarding_tasks", "agent_deployments", "files", "reports", "deployments", "projects", "requests", "messages", "invoices"];
 const LOCAL_FILE_LIMIT = 1.5 * 1024 * 1024; // demo mode keeps small files in the browser
 
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now().toString(36));
@@ -39,8 +39,8 @@ function seed() {
 
 const local = {
   kind: "local",
-  _db() { let db = store.get("db_v3", null); if (!db || !db.organizations) { db = seed(); store.set("db_v3", db); } return db; },
-  _save(db, table) { store.set("db_v3", db); emit(table); },
+  _db() { let db = store.get("db_v4", null); if (!db || !db.organizations) { db = seed(); store.set("db_v4", db); } return db; },
+  _save(db, table) { store.set("db_v4", db); emit(table); },
 
   async listOrgs() { return [...this._db().organizations]; },
   async getOrg(id) { return this._db().organizations.find((o) => o.id === id) || null; },
@@ -86,7 +86,7 @@ const local = {
     this._save(db, "organizations");
     return org.id;
   },
-  reset() { store.del("db_v3"); emit("*"); },
+  reset() { store.del("db_v4"); emit("*"); },
 };
 
 /* =====================================================================
@@ -148,7 +148,8 @@ export async function loadSampleData(db, onProgress = () => {}) {
   }
   for (let i = 0; i < SAMPLE_TABLES.length; i++) {
     const t = SAMPLE_TABLES[i];
-    if (S[t].length) await db.insertMany(t, S[t].map(({ org, ...r }) => ({ org_id: ids[org], ...r })));
+    try { if (S[t].length) await db.insertMany(t, S[t].map(({ org, ...r }) => ({ org_id: ids[org], ...r }))); }
+    catch (e) { if (t !== "invoices") throw e; } // invoices table only exists after migration 003
     onProgress((S.organizations.length + i + 1) / (S.organizations.length + SAMPLE_TABLES.length));
   }
   return S.organizations.length;

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Icon from "../../components/Icon";
 import { Empty } from "../../components/shared";
+import DemoCheckout, { DemoPaymentNote } from "../../components/DemoCheckout";
 import { Modal, PageHead, Panel, Progress, StatusBadge, Tilt } from "../../components/ui";
 import { useAuth } from "../../context/AuthContext";
 import { useIsland } from "../../context/IslandContext";
@@ -36,7 +37,14 @@ export default function Billing() {
     return () => clearInterval(t);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [demoInv, setDemoInv] = useState(null);
+  const confirmDemo = async (invoice) => {
+    await payInvoice(db, invoice, "/portal/billing");
+    island.notify(`Demo payment of ${formatAmount(invoice.amount_cents, invoice.currency)} simulated — no money charged`, { icon: "card" });
+  };
+
   const pay = async (invoice) => {
+    if (db.kind === "local") return setDemoInv(invoice); // demo accounts: practice checkout, never Stripe
     setPaying(invoice.id);
     const job = island.notify("Opening secure Stripe checkout…", { icon: "card", progress: true, persist: true, pct: 40 });
     try {
@@ -52,6 +60,8 @@ export default function Billing() {
   return (
     <>
       <PageHead title="Billing" sub="Your plan, retainer hours and invoices. Pay securely by card through Stripe." />
+      {db.kind === "local" && <DemoPaymentNote />}
+      <DemoCheckout invoice={demoInv} onClose={() => setDemoInv(null)} onConfirm={confirmDemo} />
       <div className="grid g-3">
         <Tilt className="panel">
           <small className="muted">Current plan</small>

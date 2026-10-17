@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import Icon from "../../components/Icon";
 import { Empty } from "../../components/shared";
+import DemoCheckout, { DemoPaymentNote } from "../../components/DemoCheckout";
 import { Kpi, Modal, PageHead, Panel, Segmented, StatusBadge } from "../../components/ui";
 import { useIsland } from "../../context/IslandContext";
 import { CURRENCIES, formatAmount, payInvoice, paymentsStatus, stripePaymentUrl } from "../../lib/payments";
@@ -18,7 +19,7 @@ export function useStripeStatus() {
 
 function StripeBanner({ status }) {
   if (!status) return null;
-  if (status.demo) return <div className="demo-note" style={{ marginBottom: 16 }}><b>Demo mode:</b> “Pay” simulates a successful payment. Log in with a real admin account to use Stripe.</div>;
+  if (status.demo) return <DemoPaymentNote />;
   if (!status.connected) return (
     <div className="panel" style={{ marginBottom: 16, borderColor: "var(--amber)" }}>
       <b>Stripe is not connected yet.</b>
@@ -60,7 +61,13 @@ export function InvoicesSection({ orgId, status, returnPath = "/admin/payments" 
       island.notify(`Invoice for ${formatAmount(cents, add.currency)} sent to ${orgName(add.org_id)}`, { icon: "card" }); setAdd(null);
     } catch (e) { island.notify(e.message.includes("invoices") ? "Run supabase/003_invoices_payments.sql first" : "Could not create: " + e.message, { icon: "x" }); }
   };
+  const [demoInv, setDemoInv] = useState(null);
+  const confirmDemo = async (inv) => {
+    await payInvoice(db, inv, returnPath);
+    island.notify(`Demo payment of ${formatAmount(inv.amount_cents, inv.currency)} simulated — no money charged`, { icon: "card" });
+  };
   const pay = async (inv) => {
+    if (db.kind === "local") return setDemoInv(inv); // demo accounts: practice checkout, never Stripe
     setPaying(inv.id);
     const job = island.notify("Opening secure Stripe checkout…", { icon: "card", progress: true, persist: true });
     try {
@@ -104,6 +111,7 @@ export function InvoicesSection({ orgId, status, returnPath = "/admin/payments" 
         </table></div>
       ) : <Empty icon="card" title="No invoices yet" text="Create an invoice and the client can pay it by card from their portal." />}
 
+      <DemoCheckout invoice={demoInv} onClose={() => setDemoInv(null)} onConfirm={confirmDemo} />
       <Modal open={!!add} onClose={() => setAdd(null)}>
         {add && <>
           <h2>New invoice</h2>

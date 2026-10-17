@@ -1,14 +1,16 @@
-/* Admin page registry — add a page here to get its route and sidebar entry. */
-import AdminOverview from "./AdminOverview";
-import Onboarding from "./Onboarding";
-import Clients from "./Clients";
-import Agents from "./Agents";
-import Payments from "./Payments";
-import UploadCenter from "./UploadCenter";
-import Requests from "./Requests";
-import Inbox from "./Inbox";
-import AdminDeployments from "./AdminDeployments";
-import Users from "./Users";
+﻿/* Admin page registry — add a page here to get its route and sidebar entry. */
+import { lazy } from "react";
+
+const AdminOverview = lazy(() => import("./AdminOverview"));
+const Onboarding = lazy(() => import("./Onboarding"));
+const Clients = lazy(() => import("./Clients"));
+const Agents = lazy(() => import("./Agents"));
+const Payments = lazy(() => import("./Payments"));
+const UploadCenter = lazy(() => import("./UploadCenter"));
+const Requests = lazy(() => import("./Requests"));
+const Inbox = lazy(() => import("./Inbox"));
+const AdminDeployments = lazy(() => import("./AdminDeployments"));
+const Users = lazy(() => import("./Users"));
 
 export const ADMIN_PAGES = [
   { path: "", label: "Command center", icon: "home", group: "Agency", Component: AdminOverview },

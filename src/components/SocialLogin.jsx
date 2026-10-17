@@ -23,9 +23,9 @@ const MicrosoftLogo = () => (
   </svg>
 );
 
+// Microsoft can be re-enabled by adding { id: "azure", label: "Microsoft", Logo: MicrosoftLogo } (see AUTH_SETUP.md).
 const PROVIDERS = [
   { id: "google", label: "Google", Logo: GoogleLogo },
-  { id: "azure", label: "Microsoft", Logo: MicrosoftLogo },
 ];
 
 export default function SocialLogin({ action = "Continue" }) {

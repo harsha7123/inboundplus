@@ -1,19 +1,25 @@
+import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
-import AdminLayout from "./layouts/AdminLayout";
-import { ADMIN_PAGES } from "./pages/admin/registry";
-import ClientDetail from "./pages/admin/ClientDetail";
 import { PortalProvider } from "./context/PortalContext";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import { Privacy, Terms } from "./pages/Legal";
-import PortalLayout from "./layouts/PortalLayout";
+import { PageLoader } from "./components/ui";
+import { ADMIN_PAGES } from "./pages/admin/registry";
 import { PORTAL_PAGES } from "./pages/portal/registry";
+
+// Everything except the home page is downloaded only when it's first opened (faster first load).
+const Login = lazy(() => import("./pages/Login"));
+const Privacy = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Privacy })));
+const Terms = lazy(() => import("./pages/Legal").then((m) => ({ default: m.Terms })));
+const PortalLayout = lazy(() => import("./layouts/PortalLayout"));
+const AdminLayout = lazy(() => import("./layouts/AdminLayout"));
+const ClientDetail = lazy(() => import("./pages/admin/ClientDetail"));
+
 
 function RequireAuth({ children, role = "client" }) {
   const { session, loading } = useAuth();
   const loc = useLocation();
-  if (loading) return <div className="empty" style={{ paddingTop: 120 }}>Loading…</div>;
+  if (loading) return <PageLoader />;
   if (!session) return <Navigate to="/login" replace state={{ from: loc.pathname }} />;
   if (session.role !== role) return <Navigate to={session.role === "admin" ? "/admin" : "/portal"} replace />;
   return children;
@@ -21,6 +27,7 @@ function RequireAuth({ children, role = "client" }) {
 
 export default function App() {
   return (
+    <Suspense fallback={<PageLoader />}>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
@@ -46,5 +53,6 @@ export default function App() {
       <Route path="/portal.html" element={<Navigate to="/portal" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </Suspense>
   );
 }

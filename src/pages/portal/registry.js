@@ -1,24 +1,26 @@
-/* Portal page registry — the single place to add a new portal section.
+﻿/* Portal page registry — the single place to add a new portal section.
    1. Create the page component in this folder.
    2. Add one entry below (group controls where it appears in the sidebar).
    Routes, sidebar menu, page titles and global search all read from this list. */
 
-import Overview from "./Overview";
-import Analytics from "./Analytics";
-import Ecommerce from "./Ecommerce";
-import Seo from "./Seo";
-import Ads from "./Ads";
-import Projects from "./Projects";
-import Deployments from "./Deployments";
-import Agents from "./Agents";
-import Software from "./Software";
-import Reports from "./Reports";
-import Surveys from "./Surveys";
-import Blog from "./Blog";
-import Files from "./Files";
-import Messages from "./Messages";
-import Billing from "./Billing";
-import Settings from "./Settings";
+import { lazy } from "react";
+
+const Overview = lazy(() => import("./Overview"));
+const Analytics = lazy(() => import("./Analytics"));
+const Ecommerce = lazy(() => import("./Ecommerce"));
+const Seo = lazy(() => import("./Seo"));
+const Ads = lazy(() => import("./Ads"));
+const Projects = lazy(() => import("./Projects"));
+const Deployments = lazy(() => import("./Deployments"));
+const Agents = lazy(() => import("./Agents"));
+const Software = lazy(() => import("./Software"));
+const Reports = lazy(() => import("./Reports"));
+const Surveys = lazy(() => import("./Surveys"));
+const Blog = lazy(() => import("./Blog"));
+const Files = lazy(() => import("./Files"));
+const Messages = lazy(() => import("./Messages"));
+const Billing = lazy(() => import("./Billing"));
+const Settings = lazy(() => import("./Settings"));
 
 export const PORTAL_PAGES = [
   { path: "", label: "Dashboard", icon: "home", group: "Overview", Component: Overview },

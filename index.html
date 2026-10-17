@@ -5,12 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>InboundPlus Client Hub</title>
   <meta name="description" content="InboundPlus — Ecommerce Growth Partner. Client portal for growth systems + AI.">
+  <meta name="theme-color" content="#f26b35">
   <link rel="icon" href="/img/isotipo.png">
+  <!-- open connections early: fonts and the Supabase API -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://pnagluwtfgnumtiykhzw.supabase.co" crossorigin>
+  <link rel="preload" as="image" href="/img/logo.png">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Shown instantly while the app's JavaScript downloads — replaced as soon as React starts. */
+    #boot { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+            background: #f5f7fa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #64748b; font-size: 14px; }
+    #boot img { height: 40px; }
+    #boot i { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #fde0d2; border-top-color: #f26b35; animation: bootspin .8s linear infinite; }
+    @keyframes bootspin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { #boot i { animation-duration: 2.4s; } }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root">
+    <div id="boot"><img src="/img/logo.png" alt="InboundPlus"><i></i><span>Loading your client hub…</span></div>
+  </div>
+  <noscript><p style="text-align:center;font-family:sans-serif">Please enable JavaScript to use the InboundPlus Client Hub.</p></noscript>
   <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

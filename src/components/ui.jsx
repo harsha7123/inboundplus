@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 import Icon from "./Icon";
-import { createBarScene } from "../lib/barScene";
 import { sparkOptions } from "../lib/charts";
 
 const reduceMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -110,26 +109,10 @@ export function Modal({ open, onClose, children }) {
   );
 }
 
-/** Three.js 3D bar chart. `values` updates animate in place. */
-export function BarScene({ values, colors, tooltip, height = 340, className = "scene3d", floor, radius, sceneHeight, children }) {
-  const ref = useRef(null), scene = useRef(null), tip = useRef(tooltip);
-  tip.current = tooltip;
-  useEffect(() => {
-    scene.current = createBarScene(ref.current, {
-      values, colors, floor, radius, height: sceneHeight,
-      tooltip: tooltip ? (r, c, v) => tip.current(r, c, v) : null,
-    });
-    return () => scene.current.destroy();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  useEffect(() => { scene.current?.update(values); }, [values]);
-  return (
-    <div className={className} style={{ height, position: "relative" }}>
-      <div ref={ref} style={{ position: "absolute", inset: 0 }} />
-      {children}
-    </div>
-  );
-}
+/** Spinner shown while a page's code is downloading. */
+export const PageLoader = ({ inline }) => (
+  <div className={`page-loader ${inline ? "inline" : ""}`} role="status" aria-label="Loading"><span className="spinner" /></div>
+);
 
 /** Table with click-to-sort headers. columns = [{ label, render?, num? }], rows = arrays. */
 export function SortableTable({ columns, rows, initialSort = 0, initialDir = -1 }) {

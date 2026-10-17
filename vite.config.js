@@ -5,9 +5,11 @@ export default defineConfig({
   plugins: [react()],
   server: { port: 5510 },
   build: {
-    chunkSizeWarningLimit: 900,
+    target: "es2019",
+    chunkSizeWarningLimit: 600,
     rollupOptions: {
-      output: { manualChunks: { three: ["three"], charts: ["chart.js", "react-chartjs-2"], supabase: ["@supabase/supabase-js"] } },
+      // separate, long-cached vendor chunks; pages are split automatically via React.lazy
+      output: { manualChunks: { react: ["react", "react-dom", "react-router-dom"], charts: ["chart.js", "react-chartjs-2"], supabase: ["@supabase/supabase-js"] } },
     },
   },
 });

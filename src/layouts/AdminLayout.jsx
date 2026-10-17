@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Icon from "../components/Icon";
+import { PageLoader } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { useOrgs, useTable, useDb } from "../lib/useData";
 import { ADMIN_GROUPS, ADMIN_PAGES, adminTo } from "../pages/admin/registry";
@@ -96,7 +97,7 @@ export default function AdminLayout() {
             </div>
           </div>
         </header>
-        <main className="content fade-in" key={loc.pathname}><Outlet /></main>
+        <main className="content fade-in" key={loc.pathname}><Suspense fallback={<PageLoader inline />}><Outlet /></Suspense></main>
       </div>
     </div>
   );

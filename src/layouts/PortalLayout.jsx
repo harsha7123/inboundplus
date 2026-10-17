@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import Icon from "../components/Icon";
+import { PageLoader } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { usePortal } from "../context/PortalContext";
 import D from "../data";
@@ -117,7 +118,7 @@ export default function PortalLayout() {
           </div>
         </header>
         <main className="content fade-in" key={loc.pathname}>
-          <Outlet />
+          <Suspense fallback={<PageLoader inline />}><Outlet /></Suspense>
         </main>
       </div>
     </div>

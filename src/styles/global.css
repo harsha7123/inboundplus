@@ -534,3 +534,10 @@ a.nav-item { text-decoration: none; }
 .legal p, .legal li { color: #334155; line-height: 1.7; }
 .legal ul { padding-left: 20px; }
 
+
+/* ---------- Page loader ---------- */
+.page-loader { min-height: 60vh; display: grid; place-items: center; }
+.page-loader.inline { min-height: 320px; }
+.spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--blue-soft); border-top-color: var(--blue); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
